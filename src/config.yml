@@ -1,0 +1,27 @@
+# Dynmap-SimpleClans configuration
+
+toggles:
+  update-seconds: 60                # How often the toggles are updated
+  hide-warring: true                # Hides members of clans while the clans are at war
+layer:
+  homes:
+    enable: true
+    update-seconds: 300             # How often the markers are updated
+    label: "Clan Homes"             # The label for the layer
+    format: "{clan} &8(home)"       # Variables: {clan}, {tag}, Colors: &1, New line is pipe symbol: |
+    layer-priority: 1               # Ordering priority in layer menu (higher shows on top)
+    hide-by-default: false          # Make home layer hidden by default
+    min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
+    hidden-markers: []              # Any clan tags added to this list will be hidden from view, include "world:<worldname>" in the list to hide all clan homes in an entire world
+  kills:
+    enable: true
+    update-seconds: 60              # How often the markers are updated
+    label: "Deaths"                 # The label for the layer
+    format: "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)"      # Variables: {victim}, {attacker}, {vtag}, {atag}, Colors: &1, New line is pipe symbol: |
+    layer-priority: 20              # Ordering priority in layer menu (higher shows on top)
+    hide-by-default: false          # Make home layer hidden by default
+    min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
+    visible-seconds: 300            # How long the marker will stay visible for
+    show:
+      clan-players: true            # Show deaths of clan players
+      civilians: true               # Show deaths of civilians
