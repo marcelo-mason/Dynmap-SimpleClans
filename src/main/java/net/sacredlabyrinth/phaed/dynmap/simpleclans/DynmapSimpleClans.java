@@ -34,6 +34,7 @@ public class DynmapSimpleClans extends JavaPlugin
     private Kills kills;
     private Toggles toggles;
 
+    @Override
     public void onEnable()
     {
         instance = this;
@@ -74,6 +75,7 @@ public class DynmapSimpleClans extends JavaPlugin
         info("version " + this.getDescription().getVersion() + " is activated");
     }
 
+    @Override
     public void onDisable()
     {
         if (clanHomes != null)

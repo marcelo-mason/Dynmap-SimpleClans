@@ -8,11 +8,10 @@ import java.util.List;
 
 public class Toggles
 {
-    private final String CONFIG = "toggles" + ".";
 
+    private final String CONFIG = "toggles" + ".";
     private DynmapSimpleClans plugin;
     private boolean stop;
-
     private int updateSeconds;
     private boolean hideWarring;
 
@@ -21,8 +20,7 @@ public class Toggles
         plugin = DynmapSimpleClans.getInstance();
         readConfig();
 
-        if (hideWarring)
-        {
+        if (hideWarring) {
             scheduleNextUpdate(5);
         }
     }
@@ -40,10 +38,10 @@ public class Toggles
 
     private class Update implements Runnable
     {
+
         public void run()
         {
-            if (!stop)
-            {
+            if (!stop) {
                 updateWarring();
                 scheduleNextUpdate(updateSeconds);
             }
@@ -57,8 +55,7 @@ public class Toggles
 
     private void updateWarring()
     {
-        if (!hideWarring)
-        {
+        if (!hideWarring) {
             return;
         }
 
@@ -66,22 +63,20 @@ public class Toggles
 
         boolean hide = plugin.getCfg().getBoolean(CONFIG + "hide-warring", true);
 
-        if (hide)
-        {
-            for (World world : plugin.getServer().getWorlds())
-            {
+        if (hide) {
+            for (World world : plugin.getServer().getWorlds()) {
                 List<Player> players = world.getPlayers();
 
-                for (Player player : players)
-                {
+                for (Player player : players) {
                     ClanPlayer clanPlayer = plugin.getClanManager().getClanPlayer(player);
 
-                    if (!clanPlayer.getClan().getWarringClans().isEmpty())
-                    {
-                        plugin.getDynmapApi().assertPlayerInvisibility(player, true, plugin);
+                    if (clanPlayer == null) {
+                        continue;
                     }
-                    else
-                    {
+
+                    if (!clanPlayer.getClan().getWarringClans().isEmpty()) {
+                        plugin.getDynmapApi().assertPlayerInvisibility(player, true, plugin);
+                    } else {
                         plugin.getDynmapApi().assertPlayerInvisibility(player, false, plugin);
                     }
                 }

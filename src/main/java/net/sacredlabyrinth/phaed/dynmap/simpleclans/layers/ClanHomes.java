@@ -148,9 +148,13 @@ public class ClanHomes
                 String id = clan.getTag();
                 Location loc = clan.getHomeLocation();
 
+                if (loc == null) {
+                    continue;
+                }
+
                 // one world at a time
 
-                if (loc.getWorld() != world) {
+                if (!loc.getWorld().equals(world)) {
                     continue;
                 }
 

@@ -174,7 +174,9 @@ public class Kills
         // delete all markers that we will no longer use
 
         for (Marker oldMarker : markers.values()) {
-            oldMarker.deleteMarker();
+            if (oldMarker.getMarkerSet().getMarkers().contains(oldMarker)) {
+                oldMarker.deleteMarker();
+            }
         }
 
         // clean and replace the marker set
