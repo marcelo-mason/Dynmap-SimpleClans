@@ -24,6 +24,3 @@ layer:
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
     visible-seconds: 300            # How long the marker will stay visible for
-    show:
-      clan-players: true            # Show deaths of clan players
-      civilians: true               # Show deaths of civilians

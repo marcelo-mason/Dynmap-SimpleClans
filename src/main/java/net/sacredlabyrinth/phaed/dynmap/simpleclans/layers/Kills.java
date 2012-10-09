@@ -31,8 +31,8 @@ public class Kills
     private boolean hideByDefault;
     private int minZoom;
     private int visibleSeconds;
-    private boolean clanDeaths;
-    private boolean civilianDeaths;
+    //private boolean clanDeaths;
+    //private boolean civilianDeaths;
     private MarkerSet markerSet;
     private MarkerIcon icon;
     private Map<String, Marker> markers = new HashMap<String, Marker>();
@@ -61,8 +61,8 @@ public class Kills
         minZoom = Math.max(plugin.getCfg().getInt(CONFIG + "min-zoom", 0), 0);
 
         visibleSeconds = Math.max(plugin.getCfg().getInt(CONFIG + "visible-seconds", 120), 2);
-        clanDeaths = plugin.getCfg().getBoolean(CONFIG + "show.clan-players", true);
-        civilianDeaths = plugin.getCfg().getBoolean(CONFIG + "show.civilians", true);
+        //clanDeaths = plugin.getCfg().getBoolean(CONFIG + "show.clan-players", true);
+        //civilianDeaths = plugin.getCfg().getBoolean(CONFIG + "show.civilians", true);
     }
 
     private void initMarkerSet()
@@ -193,7 +193,7 @@ public class Kills
 
     private void cleanOldKills()
     {
-        for (Iterator iter = kills.iterator(); iter.hasNext();) {
+        for (Iterator<KillEntry> iter = kills.iterator(); iter.hasNext();) {
             KillEntry kill = (KillEntry) iter.next();
 
             if (kill.getAgeSeconds() > visibleSeconds) {

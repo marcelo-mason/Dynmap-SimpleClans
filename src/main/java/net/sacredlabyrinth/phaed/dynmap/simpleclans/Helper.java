@@ -167,7 +167,6 @@ public class Helper
      * @param list
      * @return
      */
-    @SuppressWarnings("unchecked")
     public static String[] toArray(List<String> list)
     {
         return list.toArray(new String[0]);
