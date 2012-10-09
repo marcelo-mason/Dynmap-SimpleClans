@@ -8,13 +8,12 @@ public class PlayerEntry
     private String name;
     private boolean visible;
 
-    public PlayerEntry(Player player)
+    public PlayerEntry(Player player, Boolean visible)
     {
         this.name = player.getName();
 
-        // start player not visible
-
-        setVisible(false);
+        // start player with default visibility
+        setVisible(visible);
     }
 
 

@@ -40,9 +40,6 @@ public class DynmapSimpleClans extends JavaPlugin
         instance = this;
         info("initializing");
 
-        playerManager = new PlayerManager();
-        commandManager = new CommandManager();
-
         initDynmap();
         initSimpleClans();
         activate();
@@ -61,13 +58,15 @@ public class DynmapSimpleClans extends JavaPlugin
         initApis();
 
         // load configuration
-
         cfg = getConfig();
         cfg.options().copyDefaults(true);
         saveConfig();
 
-        // set up layers
+        // set up managers
+        playerManager = new PlayerManager();
+        commandManager = new CommandManager();
 
+        // set up layers
         clanHomes = new ClanHomes();
         toggles = new Toggles();
         kills = new Kills();
