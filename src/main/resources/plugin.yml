@@ -1,8 +1,9 @@
 name: Dynmap-SimpleClans
 main: net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
-version: 1.1
-author: phaed
+version: 1.2
+authors: [ phaed, BangL ]
 softdepend: [ dynmap, SimpleClans ]
+
 commands:
   map:
     description: Map commands
