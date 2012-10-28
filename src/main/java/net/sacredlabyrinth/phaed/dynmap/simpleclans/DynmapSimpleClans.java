@@ -1,5 +1,11 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -7,13 +13,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DynmapSimpleClans extends JavaPlugin
 {

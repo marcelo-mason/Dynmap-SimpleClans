@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.entries;
 
-import org.bukkit.entity.Player;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
+import org.bukkit.entity.Player;
 
 public class PlayerEntry
 {

@@ -1,10 +1,9 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import java.util.List;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class Toggles
 {

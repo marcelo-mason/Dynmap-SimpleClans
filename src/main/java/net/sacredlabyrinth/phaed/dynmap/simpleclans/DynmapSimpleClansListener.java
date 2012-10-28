@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -11,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
 
 public class DynmapSimpleClansListener implements Listener
 {
