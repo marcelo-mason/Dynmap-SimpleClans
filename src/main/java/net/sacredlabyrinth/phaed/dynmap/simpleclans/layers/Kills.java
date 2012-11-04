@@ -11,8 +11,7 @@ import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
-public class Kills
-{
+public class Kills {
 
     private final String MARKER_SET = "simpleclans.deaths";
     private final String ICON_ID = "simpleclans.death";
@@ -38,8 +37,7 @@ public class Kills
     private Map<String, Marker> markers = new HashMap<String, Marker>();
     private List<KillEntry> kills = new LinkedList<KillEntry>();
 
-    public Kills()
-    {
+    public Kills() {
         plugin = DynmapSimpleClans.getInstance();
         readConfig();
 
@@ -50,8 +48,7 @@ public class Kills
         }
     }
 
-    private void readConfig()
-    {
+    private void readConfig() {
         enable = plugin.getCfg().getBoolean(CONFIG + "enable", true);
         updateSeconds = Math.max(plugin.getCfg().getInt(CONFIG + "update-seconds", 300), 2);
         label = plugin.getCfg().getString(CONFIG + "label", LABEL);
@@ -65,8 +62,7 @@ public class Kills
         //civilianDeaths = plugin.getCfg().getBoolean(CONFIG + "show.civilians", true);
     }
 
-    private void initMarkerSet()
-    {
+    private void initMarkerSet() {
         markerSet = plugin.getMarkerApi().getMarkerSet(MARKER_SET);
 
         if (markerSet == null) {
@@ -76,7 +72,7 @@ public class Kills
         }
 
         if (markerSet == null) {
-            DynmapSimpleClans.severe("Error creating " + LABEL + " marker set");
+            plugin.severe("Error creating " + LABEL + " marker set");
             return;
         }
 
@@ -85,8 +81,7 @@ public class Kills
         markerSet.setMinZoom(minZoom);
     }
 
-    private void initIcon()
-    {
+    private void initIcon() {
         icon = plugin.getMarkerApi().getMarkerIcon(ICON_ID);
 
         if (icon == null) {
@@ -95,21 +90,18 @@ public class Kills
         }
 
         if (icon == null) {
-            DynmapSimpleClans.severe("Error creating icon");
+            plugin.severe("Error creating icon");
         }
     }
 
-    private void scheduleNextUpdate(int seconds)
-    {
+    private void scheduleNextUpdate(int seconds) {
         plugin.getServer().getScheduler().cancelTask(task);
         task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
     }
 
-    private class Update implements Runnable
-    {
-
-        public void run()
-        {
+    private class Update implements Runnable {
+        @Override
+        public void run() {
             if (!stop) {
                 updateMarkerSet();
                 scheduleNextUpdate(updateSeconds);
@@ -117,8 +109,7 @@ public class Kills
         }
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         if (markerSet != null) {
             markerSet.deleteMarkerSet();
             markerSet = null;
@@ -127,8 +118,7 @@ public class Kills
         stop = true;
     }
 
-    private void updateMarkerSet()
-    {
+    private void updateMarkerSet() {
         cleanOldKills();
 
         Map<String, Marker> newMarkers = new HashMap<String, Marker>();
@@ -185,14 +175,12 @@ public class Kills
         markers = newMarkers;
     }
 
-    public void addKillEntry(KillEntry kill)
-    {
+    public void addKillEntry(KillEntry kill) {
         kills.add(kill);
         scheduleNextUpdate(1);
     }
 
-    private void cleanOldKills()
-    {
+    private void cleanOldKills() {
         for (Iterator<KillEntry> iter = kills.iterator(); iter.hasNext();) {
             KillEntry kill = (KillEntry) iter.next();
 

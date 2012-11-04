@@ -13,8 +13,7 @@ import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
-public class ClanHomes
-{
+public class ClanHomes {
 
     private final String MARKER_SET = "simpleclans.homes";
     private final String ICON_ID = "simpleclans.home";
@@ -37,8 +36,7 @@ public class ClanHomes
     private MarkerIcon icon;
     private Map<String, Marker> markers = new HashMap<String, Marker>();
 
-    public ClanHomes()
-    {
+    public ClanHomes() {
         plugin = DynmapSimpleClans.getInstance();
         readConfig();
 
@@ -49,8 +47,7 @@ public class ClanHomes
         }
     }
 
-    private void readConfig()
-    {
+    private void readConfig() {
         enable = plugin.getCfg().getBoolean(CONFIG + "enable", true);
         updateSeconds = Math.max(plugin.getCfg().getInt(CONFIG + "update-seconds", 300), 2);
         label = plugin.getCfg().getString(CONFIG + "label", LABEL);
@@ -62,8 +59,7 @@ public class ClanHomes
         hidden = plugin.getCfg().getStringList(CONFIG + "hidden-markers");
     }
 
-    private void initMarkerSet()
-    {
+    private void initMarkerSet() {
         markerSet = plugin.getMarkerApi().getMarkerSet(MARKER_SET);
 
         if (markerSet == null) {
@@ -73,7 +69,7 @@ public class ClanHomes
         }
 
         if (markerSet == null) {
-            DynmapSimpleClans.severe("Error creating " + LABEL + " marker set");
+            plugin.severe("Error creating " + LABEL + " marker set");
             return;
         }
 
@@ -82,8 +78,7 @@ public class ClanHomes
         markerSet.setMinZoom(minZoom);
     }
 
-    private void initIcon()
-    {
+    private void initIcon() {
         icon = plugin.getMarkerApi().getMarkerIcon(ICON_ID);
 
         if (icon == null) {
@@ -92,22 +87,18 @@ public class ClanHomes
         }
 
         if (icon == null) {
-            DynmapSimpleClans.severe("Error creating icon");
+            plugin.severe("Error creating icon");
         }
-
     }
 
-    private void scheduleNextUpdate(int seconds)
-    {
+    private void scheduleNextUpdate(int seconds) {
         plugin.getServer().getScheduler().cancelTask(task);
         task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
     }
 
-    private class Update implements Runnable
-    {
-
-        public void run()
-        {
+    private class Update implements Runnable {
+        @Override
+        public void run() {
             if (!stop) {
                 updateMarkerSet();
                 scheduleNextUpdate(updateSeconds);
@@ -115,8 +106,7 @@ public class ClanHomes
         }
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         if (markerSet != null) {
             markerSet.deleteMarkerSet();
             markerSet = null;
@@ -125,8 +115,7 @@ public class ClanHomes
         stop = true;
     }
 
-    private boolean isVisible(String id, String worldName)
-    {
+    private boolean isVisible(String id, String worldName) {
         if (hidden != null && !hidden.isEmpty()) {
             if (hidden.contains(id) || hidden.contains("world:" + worldName)) {
                 return false;
@@ -135,8 +124,7 @@ public class ClanHomes
         return true;
     }
 
-    private void updateMarkerSet()
-    {
+    private void updateMarkerSet() {
         Map<String, Marker> newMarkers = new HashMap<String, Marker>();
 
         // get clans with homes

@@ -6,44 +6,37 @@ import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Location;
 
-public class KillEntry
-{
+public class KillEntry {
     private ClanPlayer victim;
     private ClanPlayer attacker;
     private Location location;
     private long timestamp;
 
-    public KillEntry(ClanPlayer victim, ClanPlayer attacker, Location location)
-    {
+    public KillEntry(ClanPlayer victim, ClanPlayer attacker, Location location) {
         this.victim = victim;
         this.attacker = attacker;
         this.timestamp = new Date().getTime();
         this.location = location;
     }
 
-    public long getAgeSeconds()
-    {
+    public long getAgeSeconds() {
         return (System.currentTimeMillis() - timestamp) / 1000;
     }
 
-    public ClanPlayer getVictim()
-    {
+    public ClanPlayer getVictim() {
         return victim;
     }
 
-    public ClanPlayer getAttacker()
-    {
+    public ClanPlayer getAttacker() {
         return attacker;
     }
 
-    public Location getLocation()
-    {
+    public Location getLocation() {
         return location;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return victim.getName() + "." + attacker.getName() + "." + Helper.toLocationString(location);
     }
 }
