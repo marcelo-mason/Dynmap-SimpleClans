@@ -37,8 +37,6 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.4.2-R0.3-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
