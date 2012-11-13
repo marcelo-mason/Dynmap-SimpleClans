@@ -3,6 +3,10 @@
 toggles:
   update-seconds: 60                # How often the toggles are updated
   hide-warring: true                # Hides members of clans while the clans are at war
+
+players:
+  hide-by-default: true             # Hides players by default
+
 layer:
   homes:
     enable: true
@@ -22,6 +26,3 @@ layer:
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
     visible-seconds: 300            # How long the marker will stay visible for
-    show:
-      clan-players: true            # Show deaths of clan players
-      civilians: true               # Show deaths of civilians

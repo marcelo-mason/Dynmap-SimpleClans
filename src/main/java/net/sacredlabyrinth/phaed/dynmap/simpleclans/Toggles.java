@@ -1,13 +1,11 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import java.util.List;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-public class Toggles
-{
+public class Toggles {
 
     private final String CONFIG = "toggles" + ".";
     private DynmapSimpleClans plugin;
@@ -15,8 +13,7 @@ public class Toggles
     private int updateSeconds;
     private boolean hideWarring;
 
-    public Toggles()
-    {
+    public Toggles() {
         plugin = DynmapSimpleClans.getInstance();
         readConfig();
 
@@ -25,22 +22,17 @@ public class Toggles
         }
     }
 
-    private void readConfig()
-    {
+    private void readConfig() {
         updateSeconds = Math.max(plugin.getCfg().getInt(CONFIG + "update-seconds", 5), 2);
         hideWarring = plugin.getCfg().getBoolean(CONFIG + "hide-warring", true);
     }
 
-    private void scheduleNextUpdate(int seconds)
-    {
+    private void scheduleNextUpdate(int seconds) {
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
     }
 
-    private class Update implements Runnable
-    {
-
-        public void run()
-        {
+    private class Update implements Runnable {
+        public void run() {
             if (!stop) {
                 updateWarring();
                 scheduleNextUpdate(updateSeconds);
@@ -48,13 +40,11 @@ public class Toggles
         }
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         stop = true;
     }
 
-    private void updateWarring()
-    {
+    private void updateWarring() {
         if (!hideWarring) {
             return;
         }

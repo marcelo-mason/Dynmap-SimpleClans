@@ -9,18 +9,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandManager implements CommandExecutor
-{
+public class CommandManager implements CommandExecutor {
 
     DynmapSimpleClans plugin;
 
-    public CommandManager()
-    {
+    public CommandManager() {
         plugin = DynmapSimpleClans.getInstance();
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-    {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         try {
             if (command.getName().equals("map")) {
                 Player player;
