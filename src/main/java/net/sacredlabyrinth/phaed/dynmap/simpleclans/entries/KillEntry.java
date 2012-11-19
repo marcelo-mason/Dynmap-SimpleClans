@@ -1,10 +1,11 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.entries;
 
 
-import java.util.Date;
+import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Location;
+
+import java.util.Date;
 
 public class KillEntry
 {

@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Helper
-{
+public class Helper {
     /**
      * Converts color codes to <span> with inline css, pipes to <br/>
      *
@@ -27,19 +26,15 @@ public class Helper
         boolean doneFirst = false;
         boolean hasFirst = msg.substring(0, 1).equals("\u00a7");
 
-        for (String section : sections)
-        {
-            if (!section.isEmpty())
-            {
-                if (!doneFirst && !hasFirst)
-                {
+        for (String section : sections) {
+            if (!section.isEmpty()) {
+                if (!doneFirst && !hasFirst) {
                     out += section;
                     doneFirst = true;
                     continue;
                 }
 
-                if (section.length() == 1)
-                {
+                if (section.length() == 1) {
                     continue;
                 }
 
@@ -55,68 +50,52 @@ public class Helper
 
     private static String colorCodeToHEX(String code)
     {
-        if (code.equalsIgnoreCase("0"))
-        {
+        if (code.equalsIgnoreCase("0")) {
             return "#222";
         }
-        if (code.equalsIgnoreCase("1"))
-        {
+        if (code.equalsIgnoreCase("1")) {
             return "#00A";
         }
-        if (code.equalsIgnoreCase("2"))
-        {
+        if (code.equalsIgnoreCase("2")) {
             return "#0A0";
         }
-        if (code.equalsIgnoreCase("3"))
-        {
+        if (code.equalsIgnoreCase("3")) {
             return "#0AA";
         }
-        if (code.equalsIgnoreCase("4"))
-        {
+        if (code.equalsIgnoreCase("4")) {
             return "#A00";
         }
-        if (code.equalsIgnoreCase("5"))
-        {
+        if (code.equalsIgnoreCase("5")) {
             return "#A0A";
         }
-        if (code.equalsIgnoreCase("6"))
-        {
+        if (code.equalsIgnoreCase("6")) {
             return "#FA0";
         }
-        if (code.equalsIgnoreCase("7"))
-        {
+        if (code.equalsIgnoreCase("7")) {
             return "#AAA";
         }
-        if (code.equalsIgnoreCase("8"))
-        {
+        if (code.equalsIgnoreCase("8")) {
             return "#555";
         }
-        if (code.equalsIgnoreCase("9"))
-        {
+        if (code.equalsIgnoreCase("9")) {
             return "#55F";
         }
-        if (code.equalsIgnoreCase("a"))
-        {
+        if (code.equalsIgnoreCase("a")) {
             return "#5F5";
         }
-        if (code.equalsIgnoreCase("b"))
-        {
+        if (code.equalsIgnoreCase("b")) {
             return "#5FF";
         }
-        if (code.equalsIgnoreCase("c"))
-        {
+        if (code.equalsIgnoreCase("c")) {
             return "#F55";
         }
-        if (code.equalsIgnoreCase("d"))
-        {
+        if (code.equalsIgnoreCase("d")) {
             return "#F5F";
         }
-        if (code.equalsIgnoreCase("e"))
-        {
+        if (code.equalsIgnoreCase("e")) {
             return "#FF5";
         }
-        if (code.equalsIgnoreCase("f"))
-        {
+        if (code.equalsIgnoreCase("f")) {
             return "#FFF";
         }
 
@@ -182,8 +161,7 @@ public class Helper
      */
     public static String stripTrailing(String msg, String sep)
     {
-        if (msg.length() < sep.length() * 2)
-        {
+        if (msg.length() < sep.length() * 2) {
             return msg;
         }
 
@@ -191,13 +169,11 @@ public class Helper
         String first = msg.substring(0, sep.length());
         String last = msg.substring(msg.length() - sep.length(), msg.length());
 
-        if (first.equals(sep))
-        {
+        if (first.equals(sep)) {
             out = msg.substring(sep.length());
         }
 
-        if (last.equals(sep))
-        {
+        if (last.equals(sep)) {
             out = msg.substring(0, msg.length() - sep.length());
         }
 
@@ -214,8 +190,7 @@ public class Helper
     {
         List<String> out = fromArray(args);
 
-        if (!out.isEmpty())
-        {
+        if (!out.isEmpty()) {
             out.remove(0);
         }
         return toArray(out);
@@ -231,8 +206,7 @@ public class Helper
     {
         String out = "";
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             out += arg + " ";
         }
 
@@ -250,8 +224,7 @@ public class Helper
     {
         String out = "";
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             out += arg + sep;
         }
 
@@ -269,8 +242,7 @@ public class Helper
     {
         String out = "";
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             out += arg + sep;
         }
 

@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayer;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
 
 public class DynmapSimpleClansListener implements Listener
 {
@@ -33,18 +33,12 @@ public class DynmapSimpleClansListener implements Listener
         }
     }
 
-    /**
-     * @param event
-     */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         plugin.getPlayerManager().addEntry(event.getPlayer());
     }
 
-     /**
-     * @param event
-     */
     @EventHandler(priority = EventPriority.LOW)
     public void onEntityDeath(EntityDeathEvent event)
     {
@@ -76,10 +70,10 @@ public class DynmapSimpleClansListener implements Listener
                 }
             }
 
-            if (attacker != null && victim != null)
+            if (attacker != null)
             {
-                ClanPlayer acp = plugin.getClanManager().getCreateClanPlayer(attacker.getName());
-                ClanPlayer vcp = plugin.getClanManager().getCreateClanPlayer(victim.getName());
+                ClanPlayer acp = plugin.getClaPlayernManager().getCreateClanPlayerExact(attacker);
+                ClanPlayer vcp = plugin.getClaPlayernManager().getCreateClanPlayerExact(victim);
 
                 DynmapSimpleClans.getInstance().getKills().addKillEntry(new KillEntry(vcp, acp, victim.getLocation()));
             }

@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers;
 
-import java.io.InputStream;
-import java.util.*;
+import com.p000ison.dev.simpleclans2.clan.Clan;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
@@ -11,8 +10,10 @@ import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
-public class Kills
-{
+import java.io.InputStream;
+import java.util.*;
+
+public class Kills {
 
     private final String MARKER_SET = "simpleclans.deaths";
     private final String ICON_ID = "simpleclans.death";
@@ -105,8 +106,7 @@ public class Kills
         task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
     }
 
-    private class Update implements Runnable
-    {
+    private class Update implements Runnable {
 
         public void run()
         {
@@ -149,10 +149,12 @@ public class Kills
                 // expand the label format
 
                 String label = format;
+                Clan vclan = kill.getVictim().getClan();
+                Clan aclan = kill.getVictim().getClan();
                 label = label.replace("{victim}", kill.getVictim().getName());
                 label = label.replace("{attacker}", kill.getAttacker().getName());
-                label = label.replace("{vtag}", kill.getVictim().getTagLabel());
-                label = label.replace("{atag}", kill.getAttacker().getTagLabel());
+                label = label.replace("{vtag}", vclan == null ? "" : vclan.getTag());
+                label = label.replace("{atag}", aclan == null ? "" : aclan.getTag());
                 label = Helper.colorToHTML(label);
 
                 // pull out the markers from the old set to reuse them
@@ -193,7 +195,7 @@ public class Kills
 
     private void cleanOldKills()
     {
-        for (Iterator iter = kills.iterator(); iter.hasNext();) {
+        for (Iterator iter = kills.iterator(); iter.hasNext(); ) {
             KillEntry kill = (KillEntry) iter.next();
 
             if (kill.getAgeSeconds() > visibleSeconds) {

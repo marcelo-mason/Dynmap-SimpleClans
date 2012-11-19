@@ -1,10 +1,11 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.managers;
 
-import java.util.HashMap;
-import java.util.Map;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.PlayerEntry;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerManager
 {

@@ -1,17 +1,19 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.p000ison.dev.simpleclans2.clan.Clan;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ClanHomes
 {
@@ -141,12 +143,12 @@ public class ClanHomes
 
         // get clans with homes
 
-        List<Clan> clans = plugin.getClanManager().getClans();
+        Set<Clan> clans = plugin.getClanManager().getClans();
 
         for (World world : plugin.getServer().getWorlds()) {
             for (Clan clan : clans) {
                 String id = clan.getTag();
-                Location loc = clan.getHomeLocation();
+                Location loc = clan.getFlags().getHomeLocation();
 
                 if (loc == null) {
                     continue;

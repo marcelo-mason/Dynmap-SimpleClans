@@ -1,22 +1,22 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
+import com.p000ison.dev.simpleclans2.api.SCCore;
+import com.p000ison.dev.simpleclans2.clan.ClanManager;
+import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayerManager;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DynmapSimpleClans extends JavaPlugin
-{
+public class DynmapSimpleClans extends JavaPlugin {
     private static DynmapSimpleClans instance;
     private static final Logger log = Logger.getLogger("Minecraft");
     private static final String LOG_PREFIX = "[Dynmap-SimpleClans] ";
@@ -24,8 +24,7 @@ public class DynmapSimpleClans extends JavaPlugin
     private Plugin dynmap;
     private DynmapAPI dynmapApi;
     private MarkerAPI markerApi;
-    private SimpleClans simpleclans;
-    private ClanManager clanManager;
+    private SCCore simpleclansCore;
     private FileConfiguration cfg;
 
     private PlayerManager playerManager;
@@ -53,8 +52,7 @@ public class DynmapSimpleClans extends JavaPlugin
 
     public void activate()
     {
-        if (!dynmap.isEnabled() || !simpleclans.isEnabled())
-        {
+        if (!dynmap.isEnabled() || simpleclansCore == null) {
             return;
         }
 
@@ -78,16 +76,13 @@ public class DynmapSimpleClans extends JavaPlugin
     @Override
     public void onDisable()
     {
-        if (clanHomes != null)
-        {
+        if (clanHomes != null) {
             clanHomes.cleanup();
         }
-        if (toggles != null)
-        {
+        if (toggles != null) {
             toggles.cleanup();
         }
-        if (kills != null)
-        {
+        if (kills != null) {
             kills.cleanup();
         }
     }
@@ -96,8 +91,7 @@ public class DynmapSimpleClans extends JavaPlugin
     {
         dynmap = getServer().getPluginManager().getPlugin("dynmap");
 
-        if (dynmap == null)
-        {
+        if (dynmap == null) {
             severe("Cannot find dynmap!");
             return;
         }
@@ -108,31 +102,22 @@ public class DynmapSimpleClans extends JavaPlugin
     {
         Plugin p = getServer().getPluginManager().getPlugin("SimpleClans");
 
-        if (p == null)
-        {
-            severe("Cannot find SimpleClans!");
-            return;
+        for (Plugin plugin : getServer().getPluginManager().getPlugins()) {
+            if (plugin instanceof SCCore) {
+                simpleclansCore = (SCCore) plugin;
+                return;
+            }
         }
-        simpleclans = (SimpleClans) p;
+
+        severe("Cannot find SimpleClans!");
     }
 
     private void initApis()
     {
         markerApi = dynmapApi.getMarkerAPI();
 
-        if (markerApi == null)
-        {
+        if (markerApi == null) {
             severe("Error loading Dynmap marker API!");
-            return;
-        }
-
-        // simpleclans api
-
-        clanManager = simpleclans.getClanManager();
-
-        if (clanManager == null)
-        {
-            info("SimpleClans not found - support disabled");
         }
     }
 
@@ -158,7 +143,12 @@ public class DynmapSimpleClans extends JavaPlugin
 
     public ClanManager getClanManager()
     {
-        return clanManager;
+        return simpleclansCore.getClanManager();
+    }
+
+    public ClanPlayerManager getClaPlayernManager()
+    {
+        return simpleclansCore.getClanPlayerManager();
     }
 
     public DynmapAPI getDynmapApi()
