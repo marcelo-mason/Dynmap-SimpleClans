@@ -42,7 +42,6 @@ public class ClanHomes {
 		plugin = DynmapSimpleClans.getInstance();
 		readConfig();
 
-		System.out.println("Clan homes enabled: "+enable);
 		if (enable) {
 			initMarkerSet();
 			initIcon();
@@ -96,7 +95,6 @@ public class ClanHomes {
 	}
 
 	private void scheduleNextUpdate(int seconds) {
-		System.out.println("Agendando update para " + seconds);
 		plugin.getServer().getScheduler().cancelTask(task);
 		task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
 	}
@@ -104,9 +102,7 @@ public class ClanHomes {
 	private class Update implements Runnable {
 
 		public void run() {
-			System.out.println("Rodando método run de Update");
 			if (!stop) {
-				System.out.println("stop de run é false");
 				updateMarkerSet();
 				scheduleNextUpdate(updateSeconds);
 			}
@@ -137,19 +133,14 @@ public class ClanHomes {
 		// get clans with homes
 
 		List<Clan> clans = plugin.getClanManager().getClans();
-		System.out.println("Clans: "+ clans.size());
 
 		for (Clan clan : clans) {
 			String id = clan.getTag();
 			Location loc = clan.getHomeLocation();
 
-			System.out.print("Clan " + clan.getName() + " encontrado");
 			if (loc == null) {
-				System.out.print("Clan " + clan.getName() + " não tem home");
 				continue;
 			}
-
-			System.out.print("Clan " + clan.getName() + " tem home");
 
 			// skip if not visible
 
@@ -177,7 +168,7 @@ public class ClanHomes {
 				m.setLabel(label, true);
 				m.setMarkerIcon(icon);
 			}
-
+			
 			newMarkers.put(id, m);
 		}
 
