@@ -1,17 +1,22 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers;
 
-import com.p000ison.dev.simpleclans2.clan.Clan;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
-import java.io.InputStream;
-import java.util.*;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
 
 public class Kills {
 

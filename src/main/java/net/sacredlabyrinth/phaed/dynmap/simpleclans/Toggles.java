@@ -1,10 +1,11 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayer;
+import java.util.List;
+
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 public class Toggles
 {
@@ -68,7 +69,7 @@ public class Toggles
                 List<Player> players = world.getPlayers();
 
                 for (Player player : players) {
-                    ClanPlayer clanPlayer = plugin.getClaPlayernManager().getClanPlayer(player);
+                    ClanPlayer clanPlayer = plugin.getClanManager().getClanPlayer(player);
 
                     if (clanPlayer == null) {
                         continue;

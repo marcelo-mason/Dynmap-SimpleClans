@@ -1,8 +1,9 @@
-name: Dynmap-SimpleClans
+name: ${project.name}
 main: net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
-version: 1.0
+version: ${project.version}
+website: ${project.url}
 author: phaed
-softdepend: [ dynmap, SimpleClans ]
+depend: [ dynmap, SimpleClans ]
 commands:
   map:
     description: Map commands

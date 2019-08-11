@@ -1,20 +1,20 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import com.p000ison.dev.simpleclans2.api.SCCore;
-import com.p000ison.dev.simpleclans2.clan.ClanManager;
-import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayerManager;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
+import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 
 public class DynmapSimpleClans extends JavaPlugin {
     private static DynmapSimpleClans instance;
@@ -24,7 +24,7 @@ public class DynmapSimpleClans extends JavaPlugin {
     private Plugin dynmap;
     private DynmapAPI dynmapApi;
     private MarkerAPI markerApi;
-    private SCCore simpleclansCore;
+    private SimpleClans simpleclansCore;
     private FileConfiguration cfg;
 
     private PlayerManager playerManager;
@@ -102,11 +102,9 @@ public class DynmapSimpleClans extends JavaPlugin {
     {
         Plugin p = getServer().getPluginManager().getPlugin("SimpleClans");
 
-        for (Plugin plugin : getServer().getPluginManager().getPlugins()) {
-            if (plugin instanceof SCCore) {
-                simpleclansCore = (SCCore) plugin;
-                return;
-            }
+        if (p != null) {
+        	simpleclansCore = (SimpleClans) p;
+        	return;
         }
 
         severe("Cannot find SimpleClans!");
@@ -144,11 +142,6 @@ public class DynmapSimpleClans extends JavaPlugin {
     public ClanManager getClanManager()
     {
         return simpleclansCore.getClanManager();
-    }
-
-    public ClanPlayerManager getClaPlayernManager()
-    {
-        return simpleclansCore.getClanPlayerManager();
     }
 
     public DynmapAPI getDynmapApi()

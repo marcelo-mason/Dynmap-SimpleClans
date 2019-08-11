@@ -1,56 +1,61 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.managers;
 
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.PlayerEntry;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandManager implements CommandExecutor
-{
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.PlayerEntry;
 
-    DynmapSimpleClans plugin;
+public class CommandManager implements CommandExecutor {
 
-    public CommandManager()
-    {
-        plugin = DynmapSimpleClans.getInstance();
-    }
+	DynmapSimpleClans plugin;
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
-    {
-        try {
-            if (command.getName().equals("map")) {
-                Player player;
+	public CommandManager() {
+		plugin = DynmapSimpleClans.getInstance();
+	}
 
-                if (sender instanceof Player) {
-                    player = (Player) sender;
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		try {
+			if (command.getName().equals("map")) {
+				Player player;
 
-                    if (args.length > 0) {
-                        String cmd = args[0];
+				if (sender instanceof Player) {
+					player = (Player) sender;
 
-                        if (cmd.equals("toggle") && player.hasPermission("simpleclans.map.toggle")) {
-                            PlayerEntry entry = plugin.getPlayerManager().getEntry(player);
+					if (args.length > 0) {
+						String cmd = args[0];
 
-                            if (entry.isVisible()) {
-                                entry.setVisible(false);
-                                player.sendMessage(ChatColor.AQUA + "You are no longer visible on the map");
-                            } else {
-                                entry.setVisible(true);
-                                player.sendMessage(ChatColor.AQUA + "You are now visible on the map");
-                            }
-                        }
-                    }
-                }
-            }
+						if (cmd.equals("toggle")) {
+							if (player.hasPermission("simpleclans.map.toggle")) {
+								PlayerEntry entry = plugin.getPlayerManager().getEntry(player);
 
-            return true;
-        } catch (Exception ex) {
-            SimpleClans.debug("Command failure", ex);
-        }
+								if (entry.isVisible()) {
+									entry.setVisible(false);
+									player.sendMessage(ChatColor.AQUA + "You are no longer visible on the map");
+								} else {
+									entry.setVisible(true);
+									player.sendMessage(ChatColor.AQUA + "You are now visible on the map");
+								}
+							} else {
+								player.sendMessage(ChatColor.AQUA + "You don't have permission to do this!");
+							}
 
-        return false;
-    }
+							return true;
+						}
+
+					}
+				}
+			}
+
+			return false;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return false;
+	}
 }

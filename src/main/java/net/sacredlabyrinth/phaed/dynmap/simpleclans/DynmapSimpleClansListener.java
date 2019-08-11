@@ -1,7 +1,5 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayer;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +10,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 public class DynmapSimpleClansListener implements Listener
 {
@@ -72,8 +73,8 @@ public class DynmapSimpleClansListener implements Listener
 
             if (attacker != null)
             {
-                ClanPlayer acp = plugin.getClaPlayernManager().getCreateClanPlayerExact(attacker);
-                ClanPlayer vcp = plugin.getClaPlayernManager().getCreateClanPlayerExact(victim);
+                ClanPlayer acp = plugin.getClanManager().getCreateClanPlayer(attacker.getUniqueId());
+                ClanPlayer vcp = plugin.getClanManager().getCreateClanPlayer(victim.getUniqueId());
 
                 DynmapSimpleClans.getInstance().getKills().addKillEntry(new KillEntry(vcp, acp, victim.getLocation()));
             }

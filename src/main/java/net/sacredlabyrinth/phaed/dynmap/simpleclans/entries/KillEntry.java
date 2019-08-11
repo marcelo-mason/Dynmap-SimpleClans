@@ -1,11 +1,12 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.entries;
 
 
-import com.p000ison.dev.simpleclans2.clanplayer.ClanPlayer;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
+import java.util.Date;
+
 import org.bukkit.Location;
 
-import java.util.Date;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 public class KillEntry
 {
@@ -23,7 +24,7 @@ public class KillEntry
     }
 
     public long getAgeSeconds()
-    {
+    {	
         return (System.currentTimeMillis() - timestamp) / 1000;
     }
 
