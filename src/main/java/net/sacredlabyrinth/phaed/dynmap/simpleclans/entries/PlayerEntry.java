@@ -12,9 +12,8 @@ public class PlayerEntry
     {
         this.name = player.getName();
 
-        // start player not visible
-
-        setVisible(false);
+        boolean visible = !DynmapSimpleClans.getInstance().getConfig().getBoolean("toggles.hide-players-by-default", true);
+        setVisible(visible);
     }
 
 

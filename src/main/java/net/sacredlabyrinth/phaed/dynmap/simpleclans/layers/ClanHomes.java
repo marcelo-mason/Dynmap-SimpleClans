@@ -1,41 +1,45 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.dynmap.markers.Marker;
+import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PreferencesManager;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 
 public class ClanHomes {
 
-	private final String MARKER_SET = "simpleclans.homes";
-	private final String ICON_ID = "simpleclans.home";
-	private final String ICON = "clanhome.png";
-	private final String CONFIG = "layer.homes.";
-	private final String LABEL = "Clan Homes";
-	private final String FORMAT = "{clan} &8(home)";
+	private static final String MARKER_SET = "simpleclans.homes";
+	private static final String CONFIG = "layer.homes.";
+	private static final String LABEL = "Clan Homes";
+	private static final String FORMAT = "{clan} &8(home)";
 	private DynmapSimpleClans plugin;
 	private boolean stop;
 	private int task;
 	private boolean enable;
 	private int updateSeconds;
+	private String defaultIcon;
 	private String label;
 	private String format;
 	private int layerPriority;
 	private boolean hideByDefault;
 	private int minZoom;
 	List<String> hidden;
+	Map<String, MarkerIcon> icons = new HashMap<>();
 	private MarkerSet markerSet;
-	private MarkerIcon icon;
 	private Map<String, Marker> markers = new HashMap<String, Marker>();
 
 	public ClanHomes() {
@@ -44,21 +48,21 @@ public class ClanHomes {
 
 		if (enable) {
 			initMarkerSet();
-			initIcon();
+			initIcons();
 			scheduleNextUpdate(5);
 		}
 	}
 
 	private void readConfig() {
-		enable = plugin.getCfg().getBoolean(CONFIG + "enable", true);
-		updateSeconds = Math.max(plugin.getCfg().getInt(CONFIG + "update-seconds", 300), 2);
-		label = plugin.getCfg().getString(CONFIG + "label", LABEL);
-		format = plugin.getCfg().getString(CONFIG + "format", FORMAT);
-		layerPriority = plugin.getCfg().getInt(CONFIG + "layer-priority", 1);
-		hideByDefault = plugin.getCfg().getBoolean(CONFIG + "hide-by-default", false);
-		minZoom = Math.max(plugin.getCfg().getInt(CONFIG + "min-zoom", 0), 0);
-
-		hidden = plugin.getCfg().getStringList(CONFIG + "hidden-markers");
+		enable = plugin.getConfig().getBoolean(CONFIG + "enable", true);
+		updateSeconds = Math.max(plugin.getConfig().getInt(CONFIG + "update-seconds", 300), 2);
+		label = plugin.getConfig().getString(CONFIG + "label", LABEL);
+		format = plugin.getConfig().getString(CONFIG + "format", FORMAT);
+		layerPriority = plugin.getConfig().getInt(CONFIG + "layer-priority", 1);
+		hideByDefault = plugin.getConfig().getBoolean(CONFIG + "hide-by-default", false);
+		minZoom = Math.max(plugin.getConfig().getInt(CONFIG + "min-zoom", 0), 0);
+		defaultIcon = plugin.getConfig().getString(CONFIG + "default-icon", "clanhome");
+		hidden = plugin.getConfig().getStringList(CONFIG + "hidden-markers");
 	}
 
 	private void initMarkerSet() {
@@ -80,18 +84,47 @@ public class ClanHomes {
 		markerSet.setMinZoom(minZoom);
 	}
 
-	private void initIcon() {
-		icon = plugin.getMarkerApi().getMarkerIcon(ICON_ID);
+	public Set<String> getIcons() {
+		return icons.keySet();
+	}
 
-		if (icon == null) {
-			InputStream stream = DynmapSimpleClans.class.getResourceAsStream("/images/" + ICON);
-			icon = plugin.getMarkerApi().createMarkerIcon(ICON_ID, ICON_ID, stream);
+	private void initIcons() {
+		MarkerAPI markerApi = plugin.getMarkerApi();
+		File iconFolder = new File(plugin.getDataFolder(), "/images/clanhome");
+
+		for (File i : iconFolder.listFiles(file -> {
+			return file.getName().contains(".png");
+		})) {
+			try {
+				String name = i.getName().split(".png")[0].toLowerCase();
+				MarkerIcon icon = markerApi.getMarkerIcon("simpleclans_" + name);
+				if (icon != null) {
+					icon.deleteIcon();
+				}
+				FileInputStream stream = new FileInputStream(i);
+				icon = markerApi.createMarkerIcon("simpleclans_" + name, "simpleclans_" + name, stream);
+				if (icon == null) {
+					DynmapSimpleClans.severe("Error creating icon for " + i.getName());
+				} else {
+					icons.put(name, icon);
+				}
+				stream.close();
+			} catch (IOException ignored) {
+				DynmapSimpleClans.severe("Error creating icon for " + i.getName());
+			}
 		}
 
-		if (icon == null) {
-			DynmapSimpleClans.severe("Error creating icon");
-		}
+		if (icons.isEmpty() || !icons.containsKey(defaultIcon)) {
+			MarkerIcon icon = markerApi.getMarkerIcon("simpleclans_" + defaultIcon);
+			if (icon != null)
+				icon.deleteIcon();
 
+			DynmapSimpleClans.severe("clanhome.png not found, using the one in the jar");
+			
+			icon = markerApi.createMarkerIcon("simpleclans_" + defaultIcon, "simpleclans_" + defaultIcon,
+					DynmapSimpleClans.class.getResourceAsStream("/images/clanhome/" + "clanhome.png"));
+			icons.put(defaultIcon, icon);
+		}
 	}
 
 	private void scheduleNextUpdate(int seconds) {
@@ -114,6 +147,7 @@ public class ClanHomes {
 			markerSet.deleteMarkerSet();
 			markerSet = null;
 		}
+
 		markers.clear();
 		stop = true;
 	}
@@ -154,11 +188,19 @@ public class ClanHomes {
 			String label = format;
 			label = label.replace("{clan}", clan.getName());
 			label = label.replace("{tag}", clan.getTag());
+			label = label.replace("{member_count}", String.valueOf(clan.getMembers().size()));
 			label = Helper.colorToHTML(label);
 
 			// pull out the markers from the old set to reuse them
 
 			Marker m = markers.remove(id);
+
+			PreferencesManager pm = new PreferencesManager(clan);
+			String iconName = pm.getClanHomeIcon();
+			if (iconName == null || !icons.containsKey(iconName)) {
+				iconName = defaultIcon;
+			}
+			MarkerIcon icon = icons.get(iconName);
 
 			if (m == null) {
 				m = markerSet.createMarker(id, label, true, world.getName(), loc.getX(), loc.getY(), loc.getZ(), icon,
@@ -168,7 +210,7 @@ public class ClanHomes {
 				m.setLabel(label, true);
 				m.setMarkerIcon(icon);
 			}
-			
+
 			newMarkers.put(id, m);
 		}
 

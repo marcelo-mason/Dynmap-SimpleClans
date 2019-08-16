@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
@@ -17,155 +17,146 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 
 public class DynmapSimpleClans extends JavaPlugin {
-    private static DynmapSimpleClans instance;
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static final String LOG_PREFIX = "[Dynmap-SimpleClans] ";
+	private static DynmapSimpleClans instance;
+	private static final Logger log = Logger.getLogger("Minecraft");
+	private static final String LOG_PREFIX = "[Dynmap-SimpleClans] ";
 
-    private Plugin dynmap;
-    private DynmapAPI dynmapApi;
-    private MarkerAPI markerApi;
-    private SimpleClans simpleclansCore;
-    private FileConfiguration cfg;
+	private Plugin dynmap;
+	private DynmapAPI dynmapApi;
+	private MarkerAPI markerApi;
+	private SimpleClans simpleclansCore;
 
-    private PlayerManager playerManager;
-    private CommandManager commandManager;
-    private ClanHomes clanHomes;
-    private Kills kills;
-    private Toggles toggles;
+	private PlayerManager playerManager;
+	private CommandManager commandManager;
+	private ClanHomes clanHomes;
+	private Kills kills;
+	private Toggles toggles;
 
-    @Override
-    public void onEnable()
-    {
-        instance = this;
-        info("initializing");
+	@Override
+	public void onEnable() {
+		instance = this;
+		info("initializing");
 
-        playerManager = new PlayerManager();
-        commandManager = new CommandManager();
+		playerManager = new PlayerManager();
+		commandManager = new CommandManager();
 
-        initDynmap();
-        initSimpleClans();
-        activate();
+		initDynmap();
+		initSimpleClans();
+		activate();
 
-        getServer().getPluginManager().registerEvents(new DynmapSimpleClansListener(), this);
-        getCommand("map").setExecutor(commandManager);
-    }
+		getServer().getPluginManager().registerEvents(new DynmapSimpleClansListener(), this);
+		getCommand("clanmap").setExecutor(commandManager);
+	}
 
-    public void activate()
-    {
-        if (!dynmap.isEnabled() || simpleclansCore == null) {
-            return;
-        }
+	public void activate() {
+		if (!dynmap.isEnabled() || simpleclansCore == null) {
+			return;
+		}
 
-        initApis();
+		initApis();
 
-        // load configuration
+		reloadConfig();
+		saveDefaultConfig();
+		// saving images
+		saveDefaultImages();
 
-        cfg = getConfig();
-        cfg.options().copyDefaults(true);
-        saveConfig();
+		// set up layers
 
-        // set up layers
+		clanHomes = new ClanHomes();
+		toggles = new Toggles();
+		kills = new Kills();
 
-        clanHomes = new ClanHomes();
-        toggles = new Toggles();
-        kills = new Kills();
+		info("version " + this.getDescription().getVersion() + " is activated");
+	}
 
-        info("version " + this.getDescription().getVersion() + " is activated");
-    }
+	public void saveDefaultImages() {
+		if (!new File(getDataFolder(), "/images/clanhome/clanhome.png").exists()) {
+			saveResource("images/clanhome/clanhome.png", false);
+		}
+		if (!new File(getDataFolder(), "/images/blood.png").exists()) {
+			saveResource("images/blood.png", false);
+		}
+	}
 
-    @Override
-    public void onDisable()
-    {
-        if (clanHomes != null) {
-            clanHomes.cleanup();
-        }
-        if (toggles != null) {
-            toggles.cleanup();
-        }
-        if (kills != null) {
-            kills.cleanup();
-        }
-    }
+	@Override
+	public void onDisable() {
+		cleanup();
+	}
 
-    private void initDynmap()
-    {
-        dynmap = getServer().getPluginManager().getPlugin("dynmap");
+	public void cleanup() {
+		if (clanHomes != null) {
+			clanHomes.cleanup();
+		}
+		if (toggles != null) {
+			toggles.cleanup();
+		}
+		if (kills != null) {
+			kills.cleanup();
+		}
+	}
 
-        if (dynmap == null) {
-            severe("Cannot find dynmap!");
-            return;
-        }
-        dynmapApi = (DynmapAPI) dynmap;
-    }
+	private void initDynmap() {
+		dynmap = getServer().getPluginManager().getPlugin("dynmap");
 
-    private void initSimpleClans()
-    {
-        Plugin p = getServer().getPluginManager().getPlugin("SimpleClans");
+		if (dynmap == null) {
+			severe("Cannot find dynmap!");
+			return;
+		}
+		dynmapApi = (DynmapAPI) dynmap;
+	}
 
-        if (p != null) {
-        	simpleclansCore = (SimpleClans) p;
-        	return;
-        }
+	private void initSimpleClans() {
+		Plugin p = getServer().getPluginManager().getPlugin("SimpleClans");
 
-        severe("Cannot find SimpleClans!");
-    }
+		if (p != null) {
+			simpleclansCore = (SimpleClans) p;
+			return;
+		}
 
-    private void initApis()
-    {
-        markerApi = dynmapApi.getMarkerAPI();
+		severe("Cannot find SimpleClans!");
+	}
 
-        if (markerApi == null) {
-            severe("Error loading Dynmap marker API!");
-        }
-    }
+	private void initApis() {
+		markerApi = dynmapApi.getMarkerAPI();
 
-    public static void info(String msg)
-    {
-        log.log(Level.INFO, LOG_PREFIX + msg);
-    }
+		if (markerApi == null) {
+			severe("Error loading Dynmap marker API!");
+		}
+	}
 
-    public static void severe(String msg)
-    {
-        log.log(Level.SEVERE, LOG_PREFIX + msg);
-    }
+	public static void info(String msg) {
+		log.log(Level.INFO, LOG_PREFIX + msg);
+	}
 
-    public static DynmapSimpleClans getInstance()
-    {
-        return instance;
-    }
+	public static void severe(String msg) {
+		log.log(Level.SEVERE, LOG_PREFIX + msg);
+	}
 
-    public MarkerAPI getMarkerApi()
-    {
-        return markerApi;
-    }
+	public static DynmapSimpleClans getInstance() {
+		return instance;
+	}
 
-    public ClanManager getClanManager()
-    {
-        return simpleclansCore.getClanManager();
-    }
+	public MarkerAPI getMarkerApi() {
+		return markerApi;
+	}
 
-    public DynmapAPI getDynmapApi()
-    {
-        return dynmapApi;
-    }
+	public ClanManager getClanManager() {
+		return simpleclansCore.getClanManager();
+	}
 
-    public FileConfiguration getCfg()
-    {
-        return cfg;
-    }
+	public DynmapAPI getDynmapApi() {
+		return dynmapApi;
+	}
 
-    public ClanHomes getClanHomes()
-    {
-        return clanHomes;
-    }
+	public ClanHomes getClanHomes() {
+		return clanHomes;
+	}
 
-    public Kills getKills()
-    {
-        return kills;
-    }
+	public Kills getKills() {
+		return kills;
+	}
 
-    public PlayerManager getPlayerManager()
-    {
-        return playerManager;
-    }
+	public PlayerManager getPlayerManager() {
+		return playerManager;
+	}
 }

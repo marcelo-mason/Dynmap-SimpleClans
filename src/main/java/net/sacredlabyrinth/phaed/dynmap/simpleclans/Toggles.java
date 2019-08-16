@@ -28,8 +28,8 @@ public class Toggles
 
     private void readConfig()
     {
-        updateSeconds = Math.max(plugin.getCfg().getInt(CONFIG + "update-seconds", 5), 2);
-        hideWarring = plugin.getCfg().getBoolean(CONFIG + "hide-warring", true);
+        updateSeconds = Math.max(plugin.getConfig().getInt(CONFIG + "update-seconds", 5), 2);
+        hideWarring = plugin.getConfig().getBoolean(CONFIG + "hide-warring", true);
     }
 
     private void scheduleNextUpdate(int seconds)
@@ -56,15 +56,9 @@ public class Toggles
 
     private void updateWarring()
     {
-        if (!hideWarring) {
-            return;
-        }
-
         // hide all players that are in war
 
-        boolean hide = plugin.getCfg().getBoolean(CONFIG + "hide-warring", true);
-
-        if (hide) {
+        if (hideWarring) {
             for (World world : plugin.getServer().getWorlds()) {
                 List<Player> players = world.getPlayers();
 

@@ -5,7 +5,7 @@ website: ${project.url}
 author: phaed
 depend: [ dynmap, SimpleClans ]
 commands:
-  map:
+  clanmap:
     description: Map commands
     usage: Syntax error, verify the command usage and try again
 permissions:

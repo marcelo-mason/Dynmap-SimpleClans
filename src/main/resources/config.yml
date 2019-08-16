@@ -3,12 +3,14 @@
 toggles:
   update-seconds: 60                # How often the toggles are updated
   hide-warring: true                # Hides members of clans while the clans are at war
+  hide-players-by-default: true     # Hides players by default
 layer:
   homes:
     enable: true
     update-seconds: 300             # How often the markers are updated
+    default-icon: "clanhome"        # Set the icon used if the clan doesn't set one, DON'T type the file extension
     label: "Clan Homes"             # The label for the layer
-    format: "{clan} &8(home)"       # Variables: {clan}, {tag}, Colors: &1, New line is pipe symbol: |
+    format: "{clan} &8(home)"       # Variables: {clan}, {tag}, {member_count}, Colors: &1, New line is pipe symbol: |
     layer-priority: 1               # Ordering priority in layer menu (higher shows on top)
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
