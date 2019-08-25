@@ -25,13 +25,18 @@ public class CommandManager implements CommandExecutor {
 		if (command.getName().equals("clanmap")) {
 			if (args.length > 0) {
 				String cmd = args[0];
+				if (cmd.equalsIgnoreCase("help")) {
+					plugin.getConfig().getStringList("help-command").forEach(s -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s)));
+					return true;
+				}
+				
 				if (cmd.equalsIgnoreCase("reload")) {
 					if (!sender.hasPermission("simpleclans.map.reload")) {
-						sender.sendMessage(ChatColor.AQUA + "You don't have permission to do this!");
+						sender.sendMessage(plugin.getLang("no-permission"));
 						return true;
 					}
 
-					sender.sendMessage(ChatColor.AQUA + "Reloading plugin...");
+					sender.sendMessage(plugin.getLang("reloading"));
 					plugin.cleanup();
 					PreferencesManager.loadPreferences();
 					plugin.reloadConfig();
@@ -45,11 +50,11 @@ public class CommandManager implements CommandExecutor {
 					if (cmd.equalsIgnoreCase("seticon") && args.length == 2) {
 						ClanPlayer cp = plugin.getClanManager().getClanPlayer(player);
 						if (cp == null || cp.getClan() == null) {
-							sender.sendMessage(ChatColor.AQUA + "You must be member of a clan");
+							sender.sendMessage(plugin.getLang("not-member"));
 							return true;
 						}
 						if (!sender.hasPermission("simpleclans.map.seticon") || !cp.isLeader()) {
-							sender.sendMessage(ChatColor.AQUA + "You don't have permission to do this!");
+							sender.sendMessage(plugin.getLang("no-permission"));
 							return true;
 						}
 						
@@ -57,26 +62,26 @@ public class CommandManager implements CommandExecutor {
 						if (plugin.getClanHomes().getIcons().contains(icon.toLowerCase())) {
 							PreferencesManager pm = new PreferencesManager(cp.getClan());
 							pm.setClanHomeIcon(icon);
-							sender.sendMessage(ChatColor.AQUA + "The icon was set successfully! The change will take effect soon...");
+							sender.sendMessage(plugin.getLang("icon-changed"));
 						} else {
-							sender.sendMessage(ChatColor.AQUA + "Icon not found!");
+							sender.sendMessage(plugin.getLang("icon-not-found"));
 						}
 						
 						return true;
 					}
 					if (cmd.equalsIgnoreCase("listicons")) {
 						if (!player.hasPermission("simpleclans.map.list")) {
-							sender.sendMessage(ChatColor.AQUA + "You don't have permission to do this!");
+							sender.sendMessage(plugin.getLang("no-permission"));
 							return true;
 						}
 
-						player.sendMessage(ChatColor.AQUA + "Available icons:");
+						player.sendMessage(plugin.getLang("available-icons"));
 						Set<String> icons = plugin.getClanHomes().getIcons();
 						icons.forEach(icon -> {
-							player.sendMessage(ChatColor.AQUA + "* " + icon);
+							player.sendMessage(plugin.getLang("icon-line").replace("@icon", icon));
 						});
 						if (icons.isEmpty()) {
-							player.sendMessage(ChatColor.RED + "* Error, no icons available!");
+							player.sendMessage(plugin.getLang("error-no-icons"));
 						}
 						
 						return true;
@@ -87,13 +92,13 @@ public class CommandManager implements CommandExecutor {
 
 							if (entry.isVisible()) {
 								entry.setVisible(false);
-								player.sendMessage(ChatColor.AQUA + "You are no longer visible on the map");
+								player.sendMessage(plugin.getLang("not-visible"));
 							} else {
 								entry.setVisible(true);
-								player.sendMessage(ChatColor.AQUA + "You are now visible on the map");
+								player.sendMessage(plugin.getLang("visible"));
 							}
 						} else {
-							player.sendMessage(ChatColor.AQUA + "You don't have permission to do this!");
+							player.sendMessage(plugin.getLang("no-permission"));
 						}
 
 						return true;

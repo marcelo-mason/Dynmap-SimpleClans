@@ -7,7 +7,7 @@ depend: [ dynmap, SimpleClans ]
 commands:
   clanmap:
     description: Map commands
-    usage: Syntax error, verify the command usage and try again
+    usage: Syntax error, verify the command usage on /<command> help
 permissions:
   simpleclans.map.toggle:
     description: Can toggle map visibility

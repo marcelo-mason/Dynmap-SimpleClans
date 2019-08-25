@@ -184,11 +184,30 @@ public class ClanHomes {
 			}
 
 			// expand the label format
+            String inactive = clan.getInactiveDays() + "/" + (clan.isVerified() ? plugin.getSimpleClansSettingsManager().getPurgeClan() : plugin.getSimpleClansSettingsManager().getPurgeUnverified());
+            String membersOnline = net.sacredlabyrinth.phaed.simpleclans.Helper.stripOffLinePlayers(clan.getMembers()).size() + "/" + clan.getSize();
+            String status = (clan.isVerified() ? plugin.getLang("verified") : plugin.getLang("unverified"));
+            String feeEnabled = (clan.isMemberFeeEnabled() ? plugin.getLang("fee-enabled") : plugin.getLang("fee-disabled"));
 
-			String label = format;
-			label = label.replace("{clan}", clan.getName());
-			label = label.replace("{tag}", clan.getTag());
-			label = label.replace("{member_count}", String.valueOf(clan.getMembers().size()));
+			String label = format
+					.replace("{clan}", clan.getName())
+					.replace("{tag}", clan.getTag())
+					.replace("{member_count}", String.valueOf(clan.getMembers().size()))
+					.replace("{inactive}", inactive)
+					.replace("{founded}", clan.getFoundedString())
+					.replace("{rival}", String.valueOf(clan.getTotalRival()))
+					.replace("{neutral}", String.valueOf(clan.getTotalNeutral()))
+					.replace("{deaths}", String.valueOf(clan.getTotalDeaths()))
+					.replace("{kdr}", String.valueOf(clan.getTotalKDR()))
+					.replace("{civilian}", String.valueOf(clan.getTotalCivilian()))
+					.replace("{members_online}", membersOnline)
+					.replace("{leaders}", clan.getLeadersString("", ", "))
+					.replace("{allies}", clan.getAllyString(", "))
+					.replace("{rivals}", clan.getRivalString(", "))
+					.replace("{fee_value}", String.valueOf(clan.getMemberFee()))
+					.replace("{status}", status)
+					.replace("{fee_enabled}", feeEnabled);
+			
 			label = Helper.colorToHTML(label);
 
 			// pull out the markers from the old set to reuse them

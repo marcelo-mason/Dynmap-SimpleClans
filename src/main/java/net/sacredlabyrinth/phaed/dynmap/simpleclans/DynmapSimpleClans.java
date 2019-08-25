@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
@@ -15,6 +16,7 @@ import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
+import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 
 public class DynmapSimpleClans extends JavaPlugin {
 	private static DynmapSimpleClans instance;
@@ -70,9 +72,9 @@ public class DynmapSimpleClans extends JavaPlugin {
 	}
 
 	public void saveDefaultImages() {
-		if (!new File(getDataFolder(), "/images/clanhome/clanhome.png").exists()) {
-			saveResource("images/clanhome/clanhome.png", false);
-		}
+		//if (!new File(getDataFolder(), "/images/clanhome/clanhome.png").exists()) {
+		//	saveResource("images/clanhome/clanhome.png", false);
+		//}
 		if (!new File(getDataFolder(), "/images/blood.png").exists()) {
 			saveResource("images/blood.png", false);
 		}
@@ -158,5 +160,22 @@ public class DynmapSimpleClans extends JavaPlugin {
 
 	public PlayerManager getPlayerManager() {
 		return playerManager;
+	}
+
+	public SettingsManager getSimpleClansSettingsManager() {
+		return simpleclansCore.getSettingsManager();
+	}
+	
+	public String getLang(String lang) {
+		String msg = null;
+		if (lang != null) {
+			msg = getConfig().getString("language." + lang);
+		}
+		if (msg == null) {
+			msg = "Missing language for " + lang;
+		} else {
+			msg = ChatColor.translateAlternateColorCodes('&', msg);
+		}
+		return msg;
 	}
 }
