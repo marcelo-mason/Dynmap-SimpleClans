@@ -72,9 +72,9 @@ public class DynmapSimpleClans extends JavaPlugin {
 	}
 
 	public void saveDefaultImages() {
-		//if (!new File(getDataFolder(), "/images/clanhome/clanhome.png").exists()) {
-		//	saveResource("images/clanhome/clanhome.png", false);
-		//}
+		if (!new File(getDataFolder(), "/images/clanhome").exists()) {
+			saveResource("images/clanhome/clanhome.png", false);
+		}
 		if (!new File(getDataFolder(), "/images/blood.png").exists()) {
 			saveResource("images/blood.png", false);
 		}
