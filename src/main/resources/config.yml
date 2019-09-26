@@ -24,7 +24,7 @@ help-command:
 toggles:
   update-seconds: 60                # How often the toggles are updated
   hide-warring: true                # Hides members of clans while the clans are at war
-  hide-players-by-default: true     # Hides players by default
+  hide-players-by-default: false     # Hides players by default
 layer:
   homes:
     enable: true
