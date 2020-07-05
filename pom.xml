@@ -4,10 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sacredlabyrinth.phaed.dynmap.simpleclans</groupId>
 	<artifactId>Dynmap-SimpleClans</artifactId>
-	<version>1.3.2</version>
+	<version>1.4.0</version>
 	<name>Dynmap-SimpleClans</name>
 
 	<url>https://github.com/RoinujNosde/Dynmap-SimpleClans</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<build>
 		<!--The final output name -->
@@ -16,7 +20,6 @@
         </finalName>
 
 		<defaultGoal>clean install</defaultGoal>
-
 		<!-- Resources -->
 		<resources>
 			<resource>
@@ -40,8 +43,8 @@
 				<version>2.5.1</version>
 				<inherited>false</inherited>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
 					<fork>true</fork>
@@ -105,6 +108,7 @@
 					<replacements>
 						<replacement>
 							<token>unknown-version</token>
+							<!--suppress UnresolvedMavenProperty -->
 							<value>${project.version}-b${project.build.number}</value>
 						</replacement>
 					</replacements>
@@ -127,10 +131,21 @@
 			<version>2.6-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+			<artifactId>SimpleClans</artifactId>
+			<version>2.12.2</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<!-- Repositories -->
 	<repositories>
+		<repository>
+			<id>bintray-roinujnosde-bukkit-plugins</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/roinujnosde/bukkit-plugins</url>
+		</repository>
 		<repository>
 			<id>dynmap-repo</id>
 			<url>http://repo.mikeprimm.com</url>
@@ -140,4 +155,12 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>bintray-roinujnosde-bukkit-plugins</id>
+			<name>roinujnosde-bukkit-plugins</name>
+			<url>https://api.bintray.com/maven/roinujnosde/bukkit-plugins/Dynmap-SimpleClans/;publish=1</url>
+		</repository>
+	</distributionManagement>
 </project>

@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +30,6 @@ public class DynmapSimpleClans extends JavaPlugin {
 	private SimpleClans simpleclansCore;
 
 	private PlayerManager playerManager;
-	private CommandManager commandManager;
 	private ClanHomes clanHomes;
 	private Kills kills;
 	private Toggles toggles;
@@ -40,14 +40,14 @@ public class DynmapSimpleClans extends JavaPlugin {
 		info("initializing");
 
 		playerManager = new PlayerManager();
-		commandManager = new CommandManager();
+		CommandManager commandManager = new CommandManager();
 
 		initDynmap();
 		initSimpleClans();
 		activate();
 
 		getServer().getPluginManager().registerEvents(new DynmapSimpleClansListener(), this);
-		getCommand("clanmap").setExecutor(commandManager);
+		Objects.requireNonNull(getCommand("clanmap")).setExecutor(commandManager);
 	}
 
 	public void activate() {

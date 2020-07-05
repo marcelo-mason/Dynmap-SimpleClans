@@ -11,3 +11,11 @@ commands:
 permissions:
   simpleclans.map.toggle:
     description: Can toggle map visibility
+  simpleclans.map.reload:
+    description: Can reload the plugin
+  simpleclans.map.list:
+    description: Can list the icons
+  simpleclans.map.icon.bypass:
+    description: Can use all icons
+  simpleclans.map.seticon:
+    description: Can set an icon

@@ -16,7 +16,7 @@ import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 public class DynmapSimpleClansListener implements Listener
 {
-    private DynmapSimpleClans plugin;
+    private final DynmapSimpleClans plugin;
 
     public DynmapSimpleClansListener()
     {

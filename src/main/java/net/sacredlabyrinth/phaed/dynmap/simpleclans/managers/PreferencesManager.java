@@ -17,7 +17,7 @@ import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 
 public class PreferencesManager {
-	private static File prefFile = new File(DynmapSimpleClans.getInstance().getDataFolder(), "preferences.json");
+	private static final File prefFile = new File(DynmapSimpleClans.getInstance().getDataFolder(), "preferences.json");
 	private static JsonArray preferences;
 	private final Clan clan;
 

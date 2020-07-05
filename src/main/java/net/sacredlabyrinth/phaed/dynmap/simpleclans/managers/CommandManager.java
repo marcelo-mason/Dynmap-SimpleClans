@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.PlayerEntry;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class CommandManager implements CommandExecutor {
 
@@ -21,7 +22,7 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
 		if (command.getName().equals("clanmap")) {
 			if (args.length > 0) {
 				String cmd = args[0];
@@ -31,81 +32,101 @@ public class CommandManager implements CommandExecutor {
 				}
 				
 				if (cmd.equalsIgnoreCase("reload")) {
-					if (!sender.hasPermission("simpleclans.map.reload")) {
-						sender.sendMessage(plugin.getLang("no-permission"));
-						return true;
-					}
-
-					sender.sendMessage(plugin.getLang("reloading"));
-					plugin.cleanup();
-					PreferencesManager.loadPreferences();
-					plugin.reloadConfig();
-					plugin.activate();
-
-					return true;
+					return processReloadCommand(sender);
 				}
 
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
 					if (cmd.equalsIgnoreCase("seticon") && args.length == 2) {
-						ClanPlayer cp = plugin.getClanManager().getClanPlayer(player);
-						if (cp == null || cp.getClan() == null) {
-							sender.sendMessage(plugin.getLang("not-member"));
-							return true;
-						}
-						if (!sender.hasPermission("simpleclans.map.seticon") || !cp.isLeader()) {
-							sender.sendMessage(plugin.getLang("no-permission"));
-							return true;
-						}
-						
-						String icon = args[1];
-						if (plugin.getClanHomes().getIcons().contains(icon.toLowerCase())) {
-							PreferencesManager pm = new PreferencesManager(cp.getClan());
-							pm.setClanHomeIcon(icon);
-							sender.sendMessage(plugin.getLang("icon-changed"));
-						} else {
-							sender.sendMessage(plugin.getLang("icon-not-found"));
-						}
-						
-						return true;
+						return processSetIconCommand(player, args[1]);
 					}
 					if (cmd.equalsIgnoreCase("listicons")) {
-						if (!player.hasPermission("simpleclans.map.list")) {
-							sender.sendMessage(plugin.getLang("no-permission"));
-							return true;
-						}
-
-						player.sendMessage(plugin.getLang("available-icons"));
-						Set<String> icons = plugin.getClanHomes().getIcons();
-						icons.forEach(icon -> {
-							player.sendMessage(plugin.getLang("icon-line").replace("@icon", icon));
-						});
-						if (icons.isEmpty()) {
-							player.sendMessage(plugin.getLang("error-no-icons"));
-						}
-						
-						return true;
+						return processListIconsCommand(player);
 					}
 					if (cmd.equalsIgnoreCase("toggle")) {
-						if (player.hasPermission("simpleclans.map.toggle")) {
-							PlayerEntry entry = plugin.getPlayerManager().getEntry(player);
-
-							if (entry.isVisible()) {
-								entry.setVisible(false);
-								player.sendMessage(plugin.getLang("not-visible"));
-							} else {
-								entry.setVisible(true);
-								player.sendMessage(plugin.getLang("visible"));
-							}
-						} else {
-							player.sendMessage(plugin.getLang("no-permission"));
-						}
-
-						return true;
+						return processToggleCommand(player);
 					}
 				}
 			}
 		}
 		return false;
+	}
+
+	private boolean processToggleCommand(Player player) {
+		if (player.hasPermission("simpleclans.map.toggle")) {
+			PlayerEntry entry = plugin.getPlayerManager().getEntry(player);
+
+			if (entry.isVisible()) {
+				entry.setVisible(false);
+				player.sendMessage(plugin.getLang("not-visible"));
+			} else {
+				entry.setVisible(true);
+				player.sendMessage(plugin.getLang("visible"));
+			}
+		} else {
+			player.sendMessage(plugin.getLang("no-permission"));
+		}
+
+		return true;
+	}
+
+	private boolean processListIconsCommand(Player player) {
+		if (!player.hasPermission("simpleclans.map.list")) {
+			player.sendMessage(plugin.getLang("no-permission"));
+			return true;
+		}
+
+		player.sendMessage(plugin.getLang("available-icons"));
+		Set<String> icons = plugin.getClanHomes().getIcons();
+		icons.forEach(icon -> {
+			player.sendMessage(plugin.getLang("icon-line").replace("@icon", icon));
+		});
+		if (icons.isEmpty()) {
+			player.sendMessage(plugin.getLang("error-no-icons"));
+		}
+
+		return true;
+	}
+
+	private boolean processReloadCommand(@NotNull CommandSender sender) {
+		if (!sender.hasPermission("simpleclans.map.reload")) {
+			sender.sendMessage(plugin.getLang("no-permission"));
+			return true;
+		}
+
+		sender.sendMessage(plugin.getLang("reloading"));
+		plugin.cleanup();
+		PreferencesManager.loadPreferences();
+		plugin.reloadConfig();
+		plugin.activate();
+
+		return true;
+	}
+
+	private boolean processSetIconCommand(@NotNull Player player, @NotNull String icon) {
+		ClanPlayer cp = plugin.getClanManager().getClanPlayer(player);
+		if (cp == null || cp.getClan() == null) {
+			player.sendMessage(plugin.getLang("not-member"));
+			return true;
+		}
+		if (!player.hasPermission("simpleclans.map.seticon") || !cp.isLeader()) {
+			player.sendMessage(plugin.getLang("no-permission"));
+			return true;
+		}
+
+		if (plugin.getClanHomes().getIcons().contains(icon.toLowerCase())) {
+			if (!player.hasPermission("simpleclans.map.icon.bypass") &&
+					!player.hasPermission("simpleclans.map.icon." + icon)) {
+				player.sendMessage(plugin.getLang("no-permission"));
+				return true;
+			}
+			PreferencesManager pm = new PreferencesManager(cp.getClan());
+			pm.setClanHomeIcon(icon);
+			player.sendMessage(plugin.getLang("icon-changed"));
+		} else {
+			player.sendMessage(plugin.getLang("icon-not-found"));
+		}
+
+		return true;
 	}
 }
