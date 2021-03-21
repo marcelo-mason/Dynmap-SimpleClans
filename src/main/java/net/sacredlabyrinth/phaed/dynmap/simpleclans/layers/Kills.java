@@ -1,35 +1,30 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 public class Kills {
 
-	private final String MARKER_SET = "simpleclans.deaths";
-	private final String ICON_ID = "simpleclans.death";
-	private final String ICON = "blood.png";
-	private final String CONFIG = "layer.kills.";
-	private final String LABEL = "Kills";
-	private final String FORMAT = "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)";
-	private DynmapSimpleClans plugin;
+	private static final String MARKER_SET = "simpleclans.deaths";
+	private static final String ICON_ID = "simpleclans.death";
+	private static final String ICON = "blood.png";
+	private static final String CONFIG = "layer.kills.";
+	private static final String LABEL = "Kills";
+	private static final String FORMAT = "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)";
+	private final DynmapSimpleClans plugin;
 	private boolean stop;
 	private int task;
 	private boolean enable;
@@ -44,8 +39,8 @@ public class Kills {
 	private boolean civilianDeaths;
 	private MarkerSet markerSet;
 	private MarkerIcon icon;
-	private Map<String, Marker> markers = new HashMap<String, Marker>();
-	private List<KillEntry> kills = new LinkedList<KillEntry>();
+	private Map<String, Marker> markers = new HashMap<>();
+	private final List<KillEntry> kills = new LinkedList<>();
 
 	public Kills() {
 		plugin = DynmapSimpleClans.getInstance();
@@ -114,7 +109,7 @@ public class Kills {
 
 	private void scheduleNextUpdate(int seconds) {
 		plugin.getServer().getScheduler().cancelTask(task);
-		task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
+		task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20L);
 	}
 
 	private class Update implements Runnable {
@@ -139,7 +134,7 @@ public class Kills {
 	private void updateMarkerSet() {
 		cleanOldKills();
 
-		Map<String, Marker> newMarkers = new HashMap<String, Marker>();
+		Map<String, Marker> newMarkers = new HashMap<>();
 
 		// get kills
 		for (KillEntry kill : kills) {
@@ -153,26 +148,23 @@ public class Kills {
 			String id = kill.toString();
 			Location loc = kill.getLocation();
 			World world = loc.getWorld();
+			if (world == null) continue;
+			String worldName = world.getName();
 			// expand the label format
 
-			String label = format;
 			Clan vclan = kill.getVictim().getClan();
 			Clan aclan = kill.getVictim().getClan();
-			label = label.replace("{victim}", kill.getVictim().getName());
-			label = label.replace("{attacker}", kill.getAttacker().getName());
-			label = label.replace("{vtag}", vclan == null ? "" : vclan.getTag());
-			label = label.replace("{atag}", aclan == null ? "" : aclan.getTag());
-			label = Helper.colorToHTML(label);
+			String label = formatLabel(kill, vclan, aclan);
 
 			// pull out the markers from the old set to reuse them
 
 			Marker m = markers.remove(id);
 
 			if (m == null) {
-				m = markerSet.createMarker(id, label, true, world.getName(), loc.getX(), loc.getY(), loc.getZ(), icon,
+				m = markerSet.createMarker(id, label, true, worldName, loc.getX(), loc.getY(), loc.getZ(), icon,
 						false);
 			} else {
-				m.setLocation(world.getName(), loc.getX(), loc.getY(), loc.getZ());
+				m.setLocation(worldName, loc.getX(), loc.getY(), loc.getZ());
 				m.setLabel(label, true);
 				m.setMarkerIcon(icon);
 			}
@@ -181,7 +173,7 @@ public class Kills {
 		}
 
 		// delete all markers that we will no longer use
-
+		markers.values().removeIf(Objects::isNull);
 		for (Marker oldMarker : markers.values()) {
 			if (oldMarker.getMarkerSet().getMarkers().contains(oldMarker)) {
 				oldMarker.deleteMarker();
@@ -189,9 +181,16 @@ public class Kills {
 		}
 
 		// clean and replace the marker set
-
 		markers.clear();
 		markers = newMarkers;
+	}
+
+	private String formatLabel(KillEntry kill, Clan vclan, Clan aclan) {
+		String label = format.replace("{victim}", kill.getVictim().getName())
+				.replace("{attacker}", kill.getAttacker().getName())
+				.replace("{vtag}", vclan == null ? "" : vclan.getTag())
+				.replace("{atag}", aclan == null ? "" : aclan.getTag());
+		return Helper.colorToHTML(label);
 	}
 
 	public void addKillEntry(KillEntry kill) {
@@ -200,10 +199,6 @@ public class Kills {
 	}
 
 	private void cleanOldKills() {
-		for (Iterator<KillEntry> iter = kills.iterator(); iter.hasNext();) {
-			if (iter.next().getAgeSeconds() > visibleSeconds) {
-				iter.remove();
-			}
-		}
+		kills.removeIf(killEntry -> killEntry.getAgeSeconds() > visibleSeconds);
 	}
 }

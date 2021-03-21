@@ -10,10 +10,10 @@ import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 
 public class KillEntry
 {
-    private ClanPlayer victim;
-    private ClanPlayer attacker;
-    private Location location;
-    private long timestamp;
+    private final ClanPlayer victim;
+    private final ClanPlayer attacker;
+    private final Location location;
+    private final long timestamp;
 
     public KillEntry(ClanPlayer victim, ClanPlayer attacker, Location location)
     {

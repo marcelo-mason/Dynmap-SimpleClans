@@ -27,7 +27,7 @@ public class CommandManager implements CommandExecutor {
 			if (args.length > 0) {
 				String cmd = args[0];
 				if (cmd.equalsIgnoreCase("help")) {
-					plugin.getConfig().getStringList("help-command").forEach(s -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s)));
+					processHelpCommand(sender);
 					return true;
 				}
 				
@@ -47,9 +47,16 @@ public class CommandManager implements CommandExecutor {
 						return processToggleCommand(player);
 					}
 				}
+			} else {
+				processHelpCommand(sender);
+				return true;
 			}
 		}
 		return false;
+	}
+
+	private void processHelpCommand(@NotNull CommandSender sender) {
+		plugin.getConfig().getStringList("help-command").forEach(s -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s)));
 	}
 
 	private boolean processToggleCommand(Player player) {
@@ -78,9 +85,7 @@ public class CommandManager implements CommandExecutor {
 
 		player.sendMessage(plugin.getLang("available-icons"));
 		Set<String> icons = plugin.getClanHomes().getIcons();
-		icons.forEach(icon -> {
-			player.sendMessage(plugin.getLang("icon-line").replace("@icon", icon));
-		});
+		icons.forEach(icon -> player.sendMessage(plugin.getLang("icon-line").replace("@icon", icon)));
 		if (icons.isEmpty()) {
 			player.sendMessage(plugin.getLang("error-no-icons"));
 		}

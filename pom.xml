@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sacredlabyrinth.phaed.dynmap.simpleclans</groupId>
 	<artifactId>Dynmap-SimpleClans</artifactId>
-	<version>1.4.0</version>
+	<version>1.4.1</version>
 	<name>Dynmap-SimpleClans</name>
 
 	<url>https://github.com/RoinujNosde/Dynmap-SimpleClans</url>
@@ -127,14 +127,14 @@
 		</dependency>
 		<dependency>
 			<groupId>us.dynmap</groupId>
-			<artifactId>dynmap</artifactId>
-			<version>2.6-SNAPSHOT</version>
+			<artifactId>dynmap-api</artifactId>
+			<version>3.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
 			<artifactId>SimpleClans</artifactId>
-			<version>2.12.2</version>
+			<version>2.15.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -142,9 +142,8 @@
 	<!-- Repositories -->
 	<repositories>
 		<repository>
-			<id>bintray-roinujnosde-bukkit-plugins</id>
-			<name>bintray</name>
-			<url>https://dl.bintray.com/roinujnosde/bukkit-plugins</url>
+			<id>codemc-repo</id>
+			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
 		<repository>
 			<id>dynmap-repo</id>
@@ -155,12 +154,4 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
-
-	<distributionManagement>
-		<repository>
-			<id>bintray-roinujnosde-bukkit-plugins</id>
-			<name>roinujnosde-bukkit-plugins</name>
-			<url>https://api.bintray.com/maven/roinujnosde/bukkit-plugins/Dynmap-SimpleClans/;publish=1</url>
-		</repository>
-	</distributionManagement>
 </project>
