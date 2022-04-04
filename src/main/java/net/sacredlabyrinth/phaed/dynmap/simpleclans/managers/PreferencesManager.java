@@ -22,7 +22,7 @@ public class PreferencesManager {
 	private final Clan clan;
 
 	public PreferencesManager(Clan clan) {
-		Objects.nonNull(clan);
+		Objects.requireNonNull(clan);
 		this.clan = clan;
 		if (preferences == null) {
 			loadPreferences();

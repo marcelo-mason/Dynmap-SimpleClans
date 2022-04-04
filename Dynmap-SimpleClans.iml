@@ -19,7 +19,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: us.dynmap:dynmap-api:3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: us.dynmap:DynmapCoreAPI:3.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.15.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:16.0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.16.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:22.0.0" level="project" />
   </component>
 </module>

@@ -108,12 +108,16 @@ public class Kills {
 	}
 
 	private void scheduleNextUpdate(int seconds) {
+		if (!enable) {
+			return;
+		}
 		plugin.getServer().getScheduler().cancelTask(task);
 		task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20L);
 	}
 
 	private class Update implements Runnable {
 
+		@Override
 		public void run() {
 			if (!stop) {
 				updateMarkerSet();

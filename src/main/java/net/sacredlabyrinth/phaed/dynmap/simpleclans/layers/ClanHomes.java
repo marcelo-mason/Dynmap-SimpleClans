@@ -1,13 +1,10 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PreferencesManager;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager.ConfigField;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.dynmap.markers.Marker;
@@ -15,10 +12,13 @@ import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PreferencesManager;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ClanHomes {
 
@@ -92,9 +92,7 @@ public class ClanHomes {
 		MarkerAPI markerApi = plugin.getMarkerApi();
 		File iconFolder = new File(plugin.getDataFolder(), "/images/clanhome");
 
-		for (File i : iconFolder.listFiles(file -> {
-			return file.getName().contains(".png");
-		})) {
+		for (File i : iconFolder.listFiles(file -> file.getName().contains(".png"))) {
 			try {
 				String name = i.getName().split(".png")[0].toLowerCase();
 				MarkerIcon icon = markerApi.getMarkerIcon("simpleclans_" + name);
@@ -184,7 +182,9 @@ public class ClanHomes {
 			}
 
 			// expand the label format
-            String inactive = clan.getInactiveDays() + "/" + (clan.isVerified() ? plugin.getSimpleClansSettingsManager().getPurgeClan() : plugin.getSimpleClansSettingsManager().getPurgeUnverified());
+            String inactive = clan.getInactiveDays() + "/" + (clan.isVerified() ?
+					plugin.getSimpleClansSettingsManager().getInt(ConfigField.PURGE_INACTIVE_CLAN_DAYS) :
+					plugin.getSimpleClansSettingsManager().getInt(ConfigField.PURGE_UNVERIFIED_CLAN_DAYS));
             String membersOnline = net.sacredlabyrinth.phaed.simpleclans.Helper.stripOffLinePlayers(clan.getMembers()).size() + "/" + clan.getSize();
             String status = (clan.isVerified() ? plugin.getLang("verified") : plugin.getLang("unverified"));
             String feeEnabled = (clan.isMemberFeeEnabled() ? plugin.getLang("fee-enabled") : plugin.getLang("fee-disabled"));
