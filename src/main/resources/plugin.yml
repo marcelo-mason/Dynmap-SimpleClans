@@ -4,7 +4,7 @@ version: ${project.version}
 website: ${project.url}
 author: phaed
 depend:
-  - DynMap
+  - dynmap
   - SimpleClans
 commands:
   clanmap:

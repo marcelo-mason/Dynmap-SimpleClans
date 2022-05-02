@@ -1,5 +1,7 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,42 +11,23 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.entries.KillEntry;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+public class DynmapSimpleClansListener implements Listener {
 
-public class DynmapSimpleClansListener implements Listener
-{
     private final DynmapSimpleClans plugin;
 
-    public DynmapSimpleClansListener()
-    {
-        plugin = DynmapSimpleClans.getInstance();
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPluginEnable(PluginEnableEvent event)
-    {
-        String name = event.getPlugin().getDescription().getName();
-
-        if (name.equals("dynmap") || name.equals("SimpleClans"))
-        {
-            plugin.activate();
-        }
+    public DynmapSimpleClansListener(DynmapSimpleClans plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event)
-    {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         plugin.getPlayerManager().addEntry(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onEntityDeath(EntityDeathEvent event)
-    {
-        if (event.getEntity() instanceof Player)
-        {
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (event.getEntity() instanceof Player) {
             Player victim = (Player) event.getEntity();
             Player attacker = null;
 
@@ -52,27 +35,21 @@ public class DynmapSimpleClansListener implements Listener
 
             EntityDamageEvent lastDamageCause = victim.getLastDamageCause();
 
-            if (lastDamageCause instanceof EntityDamageByEntityEvent)
-            {
+            if (lastDamageCause instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent) lastDamageCause;
 
-                if (entityEvent.getDamager() instanceof Player)
-                {
+                if (entityEvent.getDamager() instanceof Player) {
                     attacker = (Player) entityEvent.getDamager();
-                }
-                else if (entityEvent.getDamager() instanceof Arrow)
-                {
+                } else if (entityEvent.getDamager() instanceof Arrow) {
                     Arrow arrow = (Arrow) entityEvent.getDamager();
 
-                    if (arrow.getShooter() instanceof Player)
-                    {
+                    if (arrow.getShooter() instanceof Player) {
                         attacker = (Player) arrow.getShooter();
                     }
                 }
             }
 
-            if (attacker != null)
-            {
+            if (attacker != null) {
                 ClanPlayer acp = plugin.getClanManager().getCreateClanPlayer(attacker.getUniqueId());
                 ClanPlayer vcp = plugin.getClanManager().getCreateClanPlayer(victim.getUniqueId());
 

@@ -17,6 +17,8 @@ import java.io.File;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import static org.bukkit.Bukkit.getPluginManager;
+
 public class DynmapSimpleClans extends JavaPlugin {
 	private static DynmapSimpleClans instance;
 	public static final Logger logger = Logger.getLogger("Dynmap-SimpleClans");
@@ -42,7 +44,7 @@ public class DynmapSimpleClans extends JavaPlugin {
 
 		activate();
 
-		getServer().getPluginManager().registerEvents(new DynmapSimpleClansListener(), this);
+		getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
 		Objects.requireNonNull(getCommand("clanmap")).setExecutor(commandManager);
 	}
 
