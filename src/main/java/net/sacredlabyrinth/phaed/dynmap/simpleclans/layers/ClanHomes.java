@@ -26,7 +26,7 @@ public class ClanHomes {
 	private static final String CONFIG = "layer.homes.";
 	private static final String LABEL = "Clan Homes";
 	private static final String FORMAT = "{clan} &8(home)";
-	private DynmapSimpleClans plugin;
+	private final DynmapSimpleClans plugin;
 	private boolean stop;
 	private int task;
 	private boolean enable;
@@ -40,7 +40,7 @@ public class ClanHomes {
 	List<String> hidden;
 	Map<String, MarkerIcon> icons = new HashMap<>();
 	private MarkerSet markerSet;
-	private Map<String, Marker> markers = new HashMap<String, Marker>();
+	private Map<String, Marker> markers = new HashMap<>();
 
 	public ClanHomes() {
 		plugin = DynmapSimpleClans.getInstance();
@@ -127,7 +127,7 @@ public class ClanHomes {
 
 	private void scheduleNextUpdate(int seconds) {
 		plugin.getServer().getScheduler().cancelTask(task);
-		task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
+		task = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20L);
 	}
 
 	private class Update implements Runnable {
@@ -152,15 +152,13 @@ public class ClanHomes {
 
 	private boolean isVisible(String id, String worldName) {
 		if (hidden != null && !hidden.isEmpty()) {
-			if (hidden.contains(id) || hidden.contains("world:" + worldName)) {
-				return false;
-			}
+			return !hidden.contains(id) && !hidden.contains("world:" + worldName);
 		}
 		return true;
 	}
 
 	private void updateMarkerSet() {
-		Map<String, Marker> newMarkers = new HashMap<String, Marker>();
+		Map<String, Marker> newMarkers = new HashMap<>();
 
 		// get clans with homes
 

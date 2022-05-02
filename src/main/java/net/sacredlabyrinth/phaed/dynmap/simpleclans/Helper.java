@@ -24,7 +24,7 @@ public class Helper {
         String[] sections = msg.split("\\u00a7");
 
         boolean doneFirst = false;
-        boolean hasFirst = msg.substring(0, 1).equals("\u00a7");
+        boolean hasFirst = msg.charAt(0) == '\u00a7';
 
         for (String section : sections) {
             if (!section.isEmpty()) {
@@ -121,7 +121,7 @@ public class Helper {
      */
     public static List<String> fromArray(String... values)
     {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         Collections.addAll(results, values);
         results.remove("");
         return results;
@@ -135,7 +135,7 @@ public class Helper {
      */
     public static List<Player> fromPlayerArray(Player... values)
     {
-        List<Player> results = new ArrayList<Player>();
+        List<Player> results = new ArrayList<>();
         Collections.addAll(results, values);
         return results;
     }
@@ -167,7 +167,7 @@ public class Helper {
 
         String out = msg;
         String first = msg.substring(0, sep.length());
-        String last = msg.substring(msg.length() - sep.length(), msg.length());
+        String last = msg.substring(msg.length() - sep.length());
 
         if (first.equals(sep)) {
             out = msg.substring(sep.length());

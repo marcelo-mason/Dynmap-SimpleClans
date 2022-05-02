@@ -10,8 +10,7 @@ import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 public class Toggles
 {
 
-    private final String CONFIG = "toggles" + ".";
-    private DynmapSimpleClans plugin;
+    private final DynmapSimpleClans plugin;
     private boolean stop;
     private int updateSeconds;
     private boolean hideWarring;
@@ -28,13 +27,14 @@ public class Toggles
 
     private void readConfig()
     {
-        updateSeconds = Math.max(plugin.getConfig().getInt(CONFIG + "update-seconds", 5), 2);
-        hideWarring = plugin.getConfig().getBoolean(CONFIG + "hide-warring", true);
+        String togglesPath = "toggles" + ".";
+        updateSeconds = Math.max(plugin.getConfig().getInt(togglesPath + "update-seconds", 5), 2);
+        hideWarring = plugin.getConfig().getBoolean(togglesPath + "hide-warring", true);
     }
 
     private void scheduleNextUpdate(int seconds)
     {
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20);
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), seconds * 20L);
     }
 
     private class Update implements Runnable
@@ -69,11 +69,8 @@ public class Toggles
                         continue;
                     }
 
-                    if (!clanPlayer.getClan().getWarringClans().isEmpty()) {
-                        plugin.getDynmapApi().assertPlayerInvisibility(player, true, plugin);
-                    } else {
-                        plugin.getDynmapApi().assertPlayerInvisibility(player, false, plugin);
-                    }
+                    plugin.getDynmapApi().
+                            assertPlayerInvisibility(player, !clanPlayer.getClan().getWarringClans().isEmpty(), plugin);
                 }
             }
         }

@@ -11,7 +11,7 @@ public class PlayerManager
 {
 
     DynmapSimpleClans plugin;
-    private Map<String, PlayerEntry> players = new HashMap<String, PlayerEntry>();
+    private final Map<String, PlayerEntry> players = new HashMap<>();
 
     public PlayerManager()
     {

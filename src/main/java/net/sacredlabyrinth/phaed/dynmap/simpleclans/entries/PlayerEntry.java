@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerEntry
 {
-    private String name;
+    private final String name;
     private boolean visible;
 
     public PlayerEntry(Player player)
