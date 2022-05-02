@@ -8,7 +8,6 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
@@ -16,18 +15,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DynmapSimpleClans extends JavaPlugin {
 	private static DynmapSimpleClans instance;
-	private static final Logger log = Logger.getLogger("Minecraft");
-	private static final String LOG_PREFIX = "[Dynmap-SimpleClans] ";
-
-	private Plugin dynmap;
+	public static final Logger logger = Logger.getLogger("Dynmap-SimpleClans");
 	private DynmapAPI dynmapApi;
 	private MarkerAPI markerApi;
-	private SimpleClans simpleclansCore;
+	private SimpleClans simpleclans;
 
 	private PlayerManager playerManager;
 	private ClanHomes clanHomes;
@@ -37,13 +32,14 @@ public class DynmapSimpleClans extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		info("initializing");
+		logger.info("initializing");
+
+		dynmapApi = (DynmapAPI) getServer().getPluginManager().getPlugin("DynMap");
+		simpleclans = (SimpleClans) getServer().getPluginManager().getPlugin("SimpleClans");
 
 		playerManager = new PlayerManager();
 		CommandManager commandManager = new CommandManager();
 
-		initDynmap();
-		initSimpleClans();
 		activate();
 
 		getServer().getPluginManager().registerEvents(new DynmapSimpleClansListener(), this);
@@ -51,10 +47,6 @@ public class DynmapSimpleClans extends JavaPlugin {
 	}
 
 	public void activate() {
-		if (!dynmap.isEnabled() || simpleclansCore == null) {
-			return;
-		}
-
 		initApis();
 
 		reloadConfig();
@@ -68,7 +60,7 @@ public class DynmapSimpleClans extends JavaPlugin {
 		toggles = new Toggles();
 		kills = new Kills();
 
-		info("version " + this.getDescription().getVersion() + " is activated");
+		logger.info("version " + this.getDescription().getVersion() + " is activated");
 	}
 
 	public void saveDefaultImages() {
@@ -97,41 +89,12 @@ public class DynmapSimpleClans extends JavaPlugin {
 		}
 	}
 
-	private void initDynmap() {
-		dynmap = getServer().getPluginManager().getPlugin("dynmap");
-
-		if (dynmap == null) {
-			severe("Cannot find dynmap!");
-			return;
-		}
-		dynmapApi = (DynmapAPI) dynmap;
-	}
-
-	private void initSimpleClans() {
-		Plugin p = getServer().getPluginManager().getPlugin("SimpleClans");
-
-		if (p != null) {
-			simpleclansCore = (SimpleClans) p;
-			return;
-		}
-
-		severe("Cannot find SimpleClans!");
-    }
-
     private void initApis() {
         markerApi = dynmapApi.getMarkerAPI();
 
         if (markerApi == null) {
-            severe("Error loading Dynmap marker API!");
+			logger.severe("Error loading Dynmap marker API!");
         }
-    }
-
-    public static void info(@NotNull String msg) {
-        log.log(Level.INFO, LOG_PREFIX + msg);
-    }
-
-    public static void severe(@NotNull String msg) {
-        log.log(Level.SEVERE, LOG_PREFIX + msg);
     }
 
     public static DynmapSimpleClans getInstance() {
@@ -143,7 +106,7 @@ public class DynmapSimpleClans extends JavaPlugin {
     }
 
     public ClanManager getClanManager() {
-		return simpleclansCore.getClanManager();
+		return simpleclans.getClanManager();
 	}
 
 	public DynmapAPI getDynmapApi() {
@@ -163,7 +126,7 @@ public class DynmapSimpleClans extends JavaPlugin {
     }
 
     public SettingsManager getSettingsManager() {
-        return simpleclansCore.getSettingsManager();
+        return simpleclans.getSettingsManager();
     }
 
     /**

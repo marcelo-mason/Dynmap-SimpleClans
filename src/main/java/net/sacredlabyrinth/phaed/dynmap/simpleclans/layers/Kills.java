@@ -11,9 +11,9 @@ import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.*;
 
 public class Kills {
@@ -77,7 +77,7 @@ public class Kills {
 		}
 
 		if (markerSet == null) {
-			DynmapSimpleClans.severe("Error creating " + LABEL + " marker set");
+			DynmapSimpleClans.logger.severe("Error creating " + LABEL + " marker set");
 			return;
 		}
 
@@ -93,17 +93,17 @@ public class Kills {
 		InputStream stream;
 		try {
 			File bloodIcon = new File(plugin.getDataFolder(), "/images/" + ICON);
-			stream = new FileInputStream(bloodIcon);
+			stream = Files.newInputStream(bloodIcon.toPath());
 			icon = plugin.getMarkerApi().createMarkerIcon(ICON_ID, ICON_ID, stream);
 			stream.close();
 		} catch (IOException ex) {
-			DynmapSimpleClans.severe("blood.png not found, using the one in the jar");
+			DynmapSimpleClans.logger.severe("blood.png not found, using the one in the jar");
 			stream = DynmapSimpleClans.class.getResourceAsStream("/images/" + ICON);
 			icon = plugin.getMarkerApi().createMarkerIcon(ICON_ID, ICON_ID, stream);
 		}
 
 		if (icon == null) {
-			DynmapSimpleClans.severe("Error creating icon");
+			DynmapSimpleClans.logger.severe("Error creating icon");
 		}
 	}
 

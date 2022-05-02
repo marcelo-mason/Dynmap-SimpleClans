@@ -75,7 +75,7 @@ public class ClanHomes {
 		}
 
 		if (markerSet == null) {
-			DynmapSimpleClans.severe("Error creating " + LABEL + " marker set");
+			DynmapSimpleClans.logger.severe("Error creating " + LABEL + " marker set");
 			return;
 		}
 
@@ -102,13 +102,13 @@ public class ClanHomes {
 				FileInputStream stream = new FileInputStream(i);
 				icon = markerApi.createMarkerIcon("simpleclans_" + name, "simpleclans_" + name, stream);
 				if (icon == null) {
-					DynmapSimpleClans.severe("Error creating icon for " + i.getName());
+					DynmapSimpleClans.logger.severe("Error creating icon for " + i.getName());
 				} else {
 					icons.put(name, icon);
 				}
 				stream.close();
 			} catch (IOException ignored) {
-				DynmapSimpleClans.severe("Error creating icon for " + i.getName());
+				DynmapSimpleClans.logger.severe("Error creating icon for " + i.getName());
 			}
 		}
 
@@ -117,7 +117,7 @@ public class ClanHomes {
 			if (icon != null)
 				icon.deleteIcon();
 
-			DynmapSimpleClans.severe("clanhome.png not found, using the one in the jar");
+			DynmapSimpleClans.logger.severe("clanhome.png not found, using the one in the jar");
 			
 			icon = markerApi.createMarkerIcon("simpleclans_" + defaultIcon, "simpleclans_" + defaultIcon,
 					DynmapSimpleClans.class.getResourceAsStream("/images/clanhome/" + "clanhome.png"));
@@ -183,8 +183,8 @@ public class ClanHomes {
 
 			// expand the label format
             String inactive = clan.getInactiveDays() + "/" + (clan.isVerified() ?
-					plugin.getSimpleClansSettingsManager().getInt(ConfigField.PURGE_INACTIVE_CLAN_DAYS) :
-					plugin.getSimpleClansSettingsManager().getInt(ConfigField.PURGE_UNVERIFIED_CLAN_DAYS));
+					plugin.getSettingsManager().getInt(ConfigField.PURGE_INACTIVE_CLAN_DAYS) :
+					plugin.getSettingsManager().getInt(ConfigField.PURGE_UNVERIFIED_CLAN_DAYS));
             String membersOnline = net.sacredlabyrinth.phaed.simpleclans.Helper.stripOffLinePlayers(clan.getMembers()).size() + "/" + clan.getSize();
             String status = (clan.isVerified() ? plugin.getLang("verified") : plugin.getLang("unverified"));
             String feeEnabled = (clan.isMemberFeeEnabled() ? plugin.getLang("fee-enabled") : plugin.getLang("fee-disabled"));

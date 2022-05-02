@@ -36,7 +36,7 @@ public class PreferencesManager {
 			}
 			preferences = new Gson().fromJson(new InputStreamReader(new FileInputStream(prefFile)), JsonArray.class);
 		} catch (Exception ex) {
-			DynmapSimpleClans.severe("An error happened while reading the preferences file");
+			DynmapSimpleClans.logger.severe("An error happened while reading the preferences file");
 			ex.printStackTrace();
 		}
 
@@ -51,7 +51,7 @@ public class PreferencesManager {
 			new Gson().toJson(preferences, w);
 			w.close();
 		} catch (Exception ex) {
-			DynmapSimpleClans.severe("An error happened while saving the preferences file");
+			DynmapSimpleClans.logger.severe("An error happened while saving the preferences file");
 			ex.printStackTrace();
 		}
 	}

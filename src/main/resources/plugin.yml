@@ -3,7 +3,9 @@ main: net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
 version: ${project.version}
 website: ${project.url}
 author: phaed
-depend: [ dynmap, SimpleClans ]
+depend:
+  - DynMap
+  - SimpleClans
 commands:
   clanmap:
     description: Map commands
