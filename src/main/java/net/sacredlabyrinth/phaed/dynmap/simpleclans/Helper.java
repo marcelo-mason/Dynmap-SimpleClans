@@ -1,115 +1,124 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Helper {
+public final class Helper {
+
+    // Suppresses default constructor, ensuring non-instantiability.
+    private Helper() {
+    }
+
     /**
-     * Converts color codes to <span> with inline css, pipes to <br/>
+     * The expression universally identifies a color code.
      *
-     * @param msg
-     * @return
+     * <pre>
+     * Format: "&<color_code><text>"
+     * Valid examples: "&fHello", "Wo&1rld"
+     * </pre>
      */
-    public static String colorToHTML(String msg)
-    {
-        String out = "";
+    private static final Pattern COLOR_CODE = Pattern.compile("&(?<color>[\\da-f])(?<text>[^&]+)");
+    private static final String HTML_COLOR = "<span style='color: %s;'>%s</span>";
 
-        msg = msg.trim();
-        msg = msg.replace("&", "\u00a7");
-        msg = msg.replace("|", "<br/>");
-        String[] sections = msg.split("\\u00a7");
+    /**
+     * Converts a string with color codes to {@literal <span>} with inline css, pipes to {@literal <br>}
+     *
+     * @return colored html {@literal <span>}
+     */
+    public static String colorToHTML(@NotNull String string) {
+        string = string.trim().replace("|", "<br>");
+        Matcher matcher = COLOR_CODE.matcher(string);
 
-        boolean doneFirst = false;
-        boolean hasFirst = msg.charAt(0) == '\u00a7';
+        StringBuilder formatted = new StringBuilder();
+        while (matcher.find()) {
+            String color = matcher.group("color");
+            String text = matcher.group("text");
+            ChatColor chatColor = ChatColor.getByChar(color);
+            if (chatColor == null) {
+                continue;
+            }
 
-        for (String section : sections) {
-            if (!section.isEmpty()) {
-                if (!doneFirst && !hasFirst) {
-                    out += section;
-                    doneFirst = true;
-                    continue;
-                }
+            formatted.append(String.format(HTML_COLOR, HEX.of(chatColor).getCode(), text));
+        }
 
-                if (section.length() == 1) {
-                    continue;
-                }
+        return formatted.toString();
+    }
 
-                String color = section.substring(0, 1);
-                String text = section.substring(1);
+    public enum HEX {
+        WHITE("#FFFFFF"),
+        BLACK("#000000"),
+        DARK_GRAY("#555555"),
+        GRAY("#AAAAAA"),
+        DARK_PURPLE("#AA00AA"),
+        LIGHT_PURPLE("#FF55FF"),
+        DARK_BLUE("#0000AA"),
+        BLUE("#5555FF"),
+        DARK_AQUA("#00AAAA"),
+        AQUA("#55FFFF"),
+        GREEN("#55FF55"),
+        DARK_GREEN("#00AA00"),
+        YELLOW("#FFFF55"),
+        GOLD("#FFAA00"),
+        RED("#FF5555"),
+        DARK_RED("#AA0000");
 
-                out += "<span style='color:" + colorCodeToHEX(color) + ";'>" + text + "</span>";
+        public String getCode() {
+            return code;
+        }
+
+        private final String code;
+
+        HEX(String code) {
+            this.code = code;
+        }
+
+        public static HEX of(@NotNull ChatColor chatColor) {
+            switch (chatColor.getChar()) {
+                case '0':
+                    return HEX.BLACK;
+                case '1':
+                    return HEX.DARK_BLUE;
+                case '2':
+                    return HEX.DARK_GREEN;
+                case '3':
+                    return HEX.DARK_AQUA;
+                case '4':
+                    return HEX.DARK_RED;
+                case '5':
+                    return HEX.DARK_PURPLE;
+                case '6':
+                    return HEX.GOLD;
+                case '7':
+                    return HEX.GRAY;
+                case '8':
+                    return HEX.DARK_GRAY;
+                case '9':
+                    return HEX.BLUE;
+                case 'a':
+                    return HEX.GREEN;
+                case 'b':
+                    return HEX.AQUA;
+                case 'c':
+                    return HEX.RED;
+                case 'd':
+                    return HEX.LIGHT_PURPLE;
+                case 'e':
+                    return HEX.YELLOW;
+                default:
+                    return HEX.WHITE;
             }
         }
-
-        return out;
-    }
-
-    private static String colorCodeToHEX(String code)
-    {
-        if (code.equalsIgnoreCase("0")) {
-            return "#222";
-        }
-        if (code.equalsIgnoreCase("1")) {
-            return "#00A";
-        }
-        if (code.equalsIgnoreCase("2")) {
-            return "#0A0";
-        }
-        if (code.equalsIgnoreCase("3")) {
-            return "#0AA";
-        }
-        if (code.equalsIgnoreCase("4")) {
-            return "#A00";
-        }
-        if (code.equalsIgnoreCase("5")) {
-            return "#A0A";
-        }
-        if (code.equalsIgnoreCase("6")) {
-            return "#FA0";
-        }
-        if (code.equalsIgnoreCase("7")) {
-            return "#AAA";
-        }
-        if (code.equalsIgnoreCase("8")) {
-            return "#555";
-        }
-        if (code.equalsIgnoreCase("9")) {
-            return "#55F";
-        }
-        if (code.equalsIgnoreCase("a")) {
-            return "#5F5";
-        }
-        if (code.equalsIgnoreCase("b")) {
-            return "#5FF";
-        }
-        if (code.equalsIgnoreCase("c")) {
-            return "#F55";
-        }
-        if (code.equalsIgnoreCase("d")) {
-            return "#F5F";
-        }
-        if (code.equalsIgnoreCase("e")) {
-            return "#FF5";
-        }
-        if (code.equalsIgnoreCase("f")) {
-            return "#FFF";
-        }
-
-        return "#FFF";
     }
 
     /**
-     * Returns a prettier coordinate, does not include world
-     *
-     * @param loc
-     * @return
+     * @param loc the location
+     * @return the prettier coordinates
      */
-    public static String toLocationString(Location loc)
-    {
+    public static String toLocationString(@NotNull Location loc) {
         return loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " " + loc.getWorld().getName();
     }
 }
