@@ -91,11 +91,11 @@ public class DynmapSimpleClans extends JavaPlugin {
 
         defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
 
-        IconStorage homeIcons = new IconStorage(this, "/images/clanhome", defaultHomeIcon, markerApi);
+        IconStorage homesIcons = new IconStorage(this, "/images/clanhome", defaultHomeIcon, markerApi);
         IconStorage killsIcons = new IconStorage(this, "/images", DefaultIcons.BLOOD.getName(), markerApi);
 
         try {
-            homesLayer = new HomesLayer(homeIcons, new LayerConfig(clanHomesSection), markerApi);
+            homesLayer = new HomesLayer(homesIcons, new LayerConfig(clanHomesSection), markerApi);
         } catch (IllegalStateException ex) {
             debug(ex.getMessage());
         }
@@ -106,11 +106,12 @@ public class DynmapSimpleClans extends JavaPlugin {
             debug(ex.getMessage());
         }
     }
-
+    @NotNull
     public ClanManager getClanManager() {
         return simpleclans.getClanManager();
     }
 
+    @NotNull
     public DynmapAPI getDynmapApi() {
         return dynmapApi;
     }
