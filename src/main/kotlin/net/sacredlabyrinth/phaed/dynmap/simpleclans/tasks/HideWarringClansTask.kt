@@ -4,6 +4,8 @@ import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 
+const val TASK_INTERVAL: Long = 60 * 20L
+
 class HideWarringClansTask(val plugin: DynmapSimpleClans) : BukkitRunnable() {
 
     init {
@@ -16,9 +18,5 @@ class HideWarringClansTask(val plugin: DynmapSimpleClans) : BukkitRunnable() {
 
             plugin.dynmapApi.assertPlayerInvisibility(player, clanPlayer.clan!!.warringClans.isNotEmpty(), plugin)
         }
-    }
-
-    companion object {
-        const val TASK_INTERVAL: Long = 60 * 20L
     }
 }
