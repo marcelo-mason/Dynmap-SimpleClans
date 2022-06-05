@@ -1,12 +1,12 @@
 # Dynmap-SimpleClans configuration
+debug: false
 language:
+  layer-disabled: "&cLayer is disabled!"
   no-permission: "&cYou don't have permission!"
   reloading: "&bReloading plugin..."
   not-member: "&cYou must be member of a clan"
   icon-changed: "&bThe icon was set successfully! The change will take effect soon..."
   icon-not-found: "&cIcon not found"
-  available-icons: "&bAvailable icons:"
-  icon-line: "&b* @icon"
   error-no-icons: "&c* Error, no icons available!" 
   not-visible: "&bYou are no longer visible on the map"
   visible: "&bYou are now visible on the map"
@@ -16,19 +16,13 @@ language:
   unverified: "unverified"
 help-command:
   - "&b[Dynmap-SimpleClans] Commands:"
-  - "&b/clanmap listicons - lists the available icons"
   - "&b/clanmap seticon [iconname] - sets the clan icon"
-  - "&b/clanmap toggle - toggles your visibility on the map"
   - "&c/clanmap reload - reloads the plugin and its configurations"
   - "&b/clanmap help - shows this help"
-toggles:
-  update-seconds: 60                # How often the toggles are updated
-  hide-warring: true                # Hides members of clans while the clans are at war
-  hide-players-by-default: false     # Hides players by default
+hide-warring-players: true  # Hides members of clans while the clans are at war
 layer:
   homes:
     enable: true
-    update-seconds: 300             # How often the markers are updated
     default-icon: "clanhome"        # Set the icon used if the clan doesn't set one, DON'T type the file extension
     label: "Clan Homes"             # The label for the layer
     format: "{clan} &8(home)"       # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
@@ -38,7 +32,6 @@ layer:
     hidden-markers: []              # Any clan tags added to this list will be hidden from view, include "world:<worldname>" in the list to hide all clan homes in an entire world
   kills:
     enable: true
-    update-seconds: 60              # How often the markers are updated
     label: "Deaths"                 # The label for the layer
     format: "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)"      # Variables: {victim}, {attacker}, {vtag}, {atag}, Colors: &1, New line is pipe symbol: |
     layer-priority: 20              # Ordering priority in layer menu (higher shows on top)

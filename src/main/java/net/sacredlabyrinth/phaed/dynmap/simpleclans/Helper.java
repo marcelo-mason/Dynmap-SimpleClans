@@ -32,8 +32,8 @@ public final class Helper {
     public static String colorToHTML(@NotNull String string) {
         string = string.trim().replace("|", "<br>");
         Matcher matcher = COLOR_CODE.matcher(string);
+        StringBuffer sb = new StringBuffer();
 
-        StringBuilder formatted = new StringBuilder();
         while (matcher.find()) {
             String color = matcher.group("color");
             String text = matcher.group("text");
@@ -42,10 +42,12 @@ public final class Helper {
                 continue;
             }
 
-            formatted.append(String.format(HTML_COLOR, HEX.of(chatColor).getCode(), text));
+            String htmlEncoded = String.format(HTML_COLOR, HEX.of(chatColor).getCode(), text);
+            matcher.appendReplacement(sb, htmlEncoded);
         }
 
-        return formatted.toString();
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 
     public enum HEX {
@@ -112,13 +114,5 @@ public final class Helper {
                     return HEX.WHITE;
             }
         }
-    }
-
-    /**
-     * @param loc the location
-     * @return the prettier coordinates
-     */
-    public static String toLocationString(@NotNull Location loc) {
-        return loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " " + loc.getWorld().getName();
     }
 }
