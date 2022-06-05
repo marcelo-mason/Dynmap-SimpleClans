@@ -1,17 +1,14 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Helper {
+import static net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.debug;
 
-    // Suppresses default constructor, ensuring non-instantiability.
-    private Helper() {
-    }
+public final class Helper {
 
     /**
      * The expression universally identifies a color code.
@@ -23,6 +20,10 @@ public final class Helper {
      */
     private static final Pattern COLOR_CODE = Pattern.compile("&(?<color>[\\da-f])(?<text>[^&]+)");
     private static final String HTML_COLOR = "<span style='color: %s;'>%s</span>";
+
+    // Suppresses default constructor, ensuring non-instantiability.
+    private Helper() {
+    }
 
     /**
      * Converts a string with color codes to {@literal <span>} with inline css, pipes to {@literal <br>}
@@ -42,7 +43,7 @@ public final class Helper {
                 continue;
             }
 
-            String htmlEncoded = String.format(HTML_COLOR, HEX.of(chatColor).getCode(), text);
+            String htmlEncoded = String.format(HTML_COLOR, HEXColor.of(chatColor).getCode(), text);
             matcher.appendReplacement(sb, htmlEncoded);
         }
 
@@ -50,7 +51,7 @@ public final class Helper {
         return sb.toString();
     }
 
-    public enum HEX {
+    public enum HEXColor {
         WHITE("#FFFFFF"),
         BLACK("#000000"),
         DARK_GRAY("#555555"),
@@ -68,51 +69,23 @@ public final class Helper {
         RED("#FF5555"),
         DARK_RED("#AA0000");
 
-        public String getCode() {
-            return code;
-        }
-
         private final String code;
 
-        HEX(String code) {
+        HEXColor(String code) {
             this.code = code;
         }
 
-        public static HEX of(@NotNull ChatColor chatColor) {
-            switch (chatColor.getChar()) {
-                case '0':
-                    return HEX.BLACK;
-                case '1':
-                    return HEX.DARK_BLUE;
-                case '2':
-                    return HEX.DARK_GREEN;
-                case '3':
-                    return HEX.DARK_AQUA;
-                case '4':
-                    return HEX.DARK_RED;
-                case '5':
-                    return HEX.DARK_PURPLE;
-                case '6':
-                    return HEX.GOLD;
-                case '7':
-                    return HEX.GRAY;
-                case '8':
-                    return HEX.DARK_GRAY;
-                case '9':
-                    return HEX.BLUE;
-                case 'a':
-                    return HEX.GREEN;
-                case 'b':
-                    return HEX.AQUA;
-                case 'c':
-                    return HEX.RED;
-                case 'd':
-                    return HEX.LIGHT_PURPLE;
-                case 'e':
-                    return HEX.YELLOW;
-                default:
-                    return HEX.WHITE;
+        public static HEXColor of(@NotNull ChatColor chatColor) {
+            try {
+                return HEXColor.valueOf(chatColor.name());
+            } catch (IllegalArgumentException ex) {
+                debug(String.format("Error while trying to parse the hex color of %s: %s", chatColor.name(), ex.getMessage()));
+                return HEXColor.WHITE;
             }
+        }
+
+        public String getCode() {
+            return code;
         }
     }
 }

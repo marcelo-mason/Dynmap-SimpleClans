@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.HomeLayer;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.HomesLayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.KillsLayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LayerConfig;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
@@ -8,7 +8,6 @@ import net.sacredlabyrinth.phaed.dynmap.simpleclans.tasks.HideWarringClansTask;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.ChatColor;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
@@ -17,9 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import static net.sacredlabyrinth.phaed.dynmap.simpleclans.Preferences.loadPreferences;
 import static org.bukkit.Bukkit.getPluginManager;
@@ -29,8 +26,9 @@ public class DynmapSimpleClans extends JavaPlugin {
     private DynmapAPI dynmapApi;
     private MarkerAPI markerApi;
     private SimpleClans simpleclans;
-    private HomeLayer homeLayer;
+    private HomesLayer homesLayer;
     private KillsLayer killsLayer;
+    private String defaultHomeIcon;
 
     /**
      * @return The plugin instance
@@ -74,14 +72,8 @@ public class DynmapSimpleClans extends JavaPlugin {
 
         reload();
 
-        CommandManager commandManager = new CommandManager(this);
-        PluginCommand clanmap = Objects.requireNonNull(getCommand("clanmap"));
-        clanmap.setExecutor(commandManager);
-        clanmap.setTabCompleter(commandManager);
-
+        new CommandManager(this);
         getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
-
-        getLogger().log(Level.INFO, "Version {0} is activated!", getDescription().getVersion());
     }
 
     public void reload() {
@@ -97,13 +89,18 @@ public class DynmapSimpleClans extends JavaPlugin {
         ConfigurationSection clanHomesSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.homes"));
         ConfigurationSection killsSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.kills"));
 
-        String defaultIconName = clanHomesSection.getString("default-icon", "clanhome");
+        defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
 
-        IconStorage homeIcons = new IconStorage(this, "/images/clanhome", defaultIconName, markerApi);
-        IconStorage killsIcons = new IconStorage(this, "/images", "blood", markerApi);
+        IconStorage homeIcons = new IconStorage(this, "/images/clanhome", defaultHomeIcon, markerApi);
+        IconStorage killsIcons = new IconStorage(this, "/images", DefaultIcons.BLOOD.getName(), markerApi);
 
         try {
-            homeLayer = new HomeLayer(homeIcons, new LayerConfig(clanHomesSection), markerApi);
+            homesLayer = new HomesLayer(homeIcons, new LayerConfig(clanHomesSection), markerApi);
+        } catch (IllegalStateException ex) {
+            debug(ex.getMessage());
+        }
+
+        try {
             killsLayer = new KillsLayer(killsIcons, new LayerConfig(killsSection), markerApi);
         } catch (IllegalStateException ex) {
             debug(ex.getMessage());
@@ -119,8 +116,8 @@ public class DynmapSimpleClans extends JavaPlugin {
     }
 
     @Nullable
-    public HomeLayer getHomeLayer() {
-        return homeLayer;
+    public HomesLayer getHomeLayer() {
+        return homesLayer;
     }
 
     @Nullable
@@ -131,28 +128,61 @@ public class DynmapSimpleClans extends JavaPlugin {
 
     private void loadDependencies() {
         dynmapApi = (DynmapAPI) getServer().getPluginManager().getPlugin("DynMap");
-        if (dynmapApi != null) {
-            markerApi = dynmapApi.getMarkerAPI();
-            if (markerApi == null) {
-                getLogger().severe("'markers' component has not been configured in DynMap!");
-            }
+        simpleclans = SimpleClans.getInstance();
+
+        if (simpleclans == null) {
+            getLogger().severe("SimpleClans wasn't found, disabling...");
+            getPluginLoader().disablePlugin(this);
         }
 
-        simpleclans = SimpleClans.getInstance();
+        if (dynmapApi == null) {
+            getLogger().severe("Dynmap wasn't found, disabling...");
+            getPluginLoader().disablePlugin(this);
+        }
+
+        markerApi = dynmapApi.getMarkerAPI();
+        if (markerApi == null) {
+            getLogger().severe("'markers' component has not been configured in DynMap! Disabling...");
+            getPluginLoader().disablePlugin(this);
+        }
     }
 
     private void saveDefaultImages() {
-        if (!new File(getDataFolder(), "/images/clanhome").exists()) {
-            saveResource("images/clanhome/clanhome.png", false);
+        String clanhomePath = DefaultIcons.CLANHOME.getPath();
+        String bloodPath = DefaultIcons.BLOOD.getPath();
+
+        if (!new File(getDataFolder(), clanhomePath).exists() && defaultHomeIcon.equalsIgnoreCase(DefaultIcons.CLANHOME.getName())) {
+            saveResource(clanhomePath, false);
         }
-        if (!new File(getDataFolder(), "/images/blood.png").exists()) {
-            saveResource("images/blood.png", false);
+        if (!new File(getDataFolder(), bloodPath).exists()) {
+            saveResource(bloodPath, false);
         }
     }
 
     private void loadTasks() {
         if (!getConfig().getBoolean("hide-warring-players", true)) {
             new HideWarringClansTask(this);
+        }
+    }
+
+    enum DefaultIcons {
+        CLANHOME("clanhome", "/images/clanhome.png"),
+        BLOOD("blood", "/images/clanhome/clanhome.png");
+
+        private final String name;
+        private final String path;
+
+        DefaultIcons(String name, String path) {
+            this.name = name;
+            this.path = path;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

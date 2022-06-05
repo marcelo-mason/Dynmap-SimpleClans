@@ -2,17 +2,16 @@ package net.sacredlabyrinth.phaed.dynmap.simpleclans.managers;
 
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Preferences;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.HomeLayer;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.dynmap.markers.MarkerIcon;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,11 +24,13 @@ import static net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.lan
 public final class CommandManager implements TabExecutor {
 
     private final @NotNull DynmapSimpleClans plugin;
-    private final @Nullable HomeLayer homeLayer;
 
     public CommandManager(@NotNull DynmapSimpleClans plugin) {
         this.plugin = plugin;
-        homeLayer = plugin.getHomeLayer();
+
+        PluginCommand clanmap = Objects.requireNonNull(plugin.getCommand("clanmap"));
+        clanmap.setExecutor(this);
+        clanmap.setTabCompleter(this);
     }
 
     @Override
@@ -93,12 +94,12 @@ public final class CommandManager implements TabExecutor {
             return true;
         }
 
-        if (homeLayer == null) {
+        if (plugin.getHomeLayer() == null) {
             player.sendMessage("layer-disabled");
             return true;
         }
 
-        if (homeLayer.getIconStorage().has(icon.toLowerCase())) {
+        if (plugin.getHomeLayer().getIconStorage().has(icon.toLowerCase())) {
             if (!player.hasPermission("simpleclans.map.icon.bypass") &&
                     !player.hasPermission("simpleclans.map.icon." + icon)) {
                 player.sendMessage(lang("no-permission"));
@@ -107,7 +108,7 @@ public final class CommandManager implements TabExecutor {
 
             Preferences pm = new Preferences(clan);
             pm.setClanHomeIcon(icon);
-            homeLayer.upsertMarker(clan);
+            plugin.getHomeLayer().upsertMarker(clan);
             player.sendMessage(lang("icon-changed"));
         } else {
             player.sendMessage(lang("icon-not-found"));
@@ -127,7 +128,7 @@ public final class CommandManager implements TabExecutor {
         }
 
         if (args[0].equalsIgnoreCase("seticon")) {
-            if (homeLayer == null) {
+            if (plugin.getHomeLayer() == null) {
                 return Collections.emptyList();
             }
 
@@ -136,7 +137,7 @@ public final class CommandManager implements TabExecutor {
                 return Collections.emptyList();
             }
 
-            List<String> icons = homeLayer.getIconStorage().getIcons().stream().
+            List<String> icons = plugin.getHomeLayer().getIconStorage().getIcons().stream().
                     map(MarkerIcon::getMarkerIconLabel).
                     collect(Collectors.toList());
 

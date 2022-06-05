@@ -10,7 +10,7 @@ import net.sacredlabyrinth.phaed.simpleclans.Clan
 import net.sacredlabyrinth.phaed.simpleclans.utils.VanishUtils
 import org.dynmap.markers.MarkerAPI
 
-class HomeLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
+class HomesLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
     Layer("simpleclans.layers.home", iconStorage, config, markerAPI) {
 
     init {
