@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.managers;
 
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.Preferences;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import net.sacredlabyrinth.phaed.simpleclans.Flags;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -99,15 +99,18 @@ public final class CommandManager implements TabExecutor {
             return true;
         }
 
-        if (plugin.getHomeLayer().getIconStorage().has(icon.toLowerCase())) {
+        String iconName = icon.toLowerCase();
+        if (plugin.getHomeLayer().getIconStorage().has(iconName)) {
             if (!player.hasPermission("simpleclans.map.icon.bypass") &&
                     !player.hasPermission("simpleclans.map.icon." + icon)) {
                 player.sendMessage(lang("no-permission"));
                 return true;
             }
 
-            Preferences pm = new Preferences(clan);
-            pm.setClanHomeIcon(icon);
+            Flags flags = new Flags(clan.getFlags());
+            flags.put("defaulticon", iconName);
+            clan.setFlags(flags.toJSONString());
+
             plugin.getHomeLayer().upsertMarker(clan);
             player.sendMessage(lang("icon-changed"));
         } else {

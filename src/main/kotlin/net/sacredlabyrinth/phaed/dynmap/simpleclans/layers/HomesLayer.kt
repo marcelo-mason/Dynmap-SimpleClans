@@ -1,11 +1,11 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers
 
+import com.google.gson.JsonParser
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.debug
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.lang
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.IconStorage
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.Preferences
 import net.sacredlabyrinth.phaed.simpleclans.Clan
 import net.sacredlabyrinth.phaed.simpleclans.utils.VanishUtils
 import org.dynmap.markers.MarkerAPI
@@ -25,8 +25,8 @@ class HomesLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: Marke
         val world = loc?.world ?: return
         val worldName = world.name
 
-        val preferences = Preferences(clan)
-        val icon = iconStorage.getIcon(preferences.clanHomeIcon)
+        val iconName = JsonParser().parse(clan.flags).asJsonObject.get("defaulticon").asString
+        val icon = iconStorage.getIcon(iconName)
         val label = formatClanLabel(clan)
 
         if (isHidden(tag, worldName)) {

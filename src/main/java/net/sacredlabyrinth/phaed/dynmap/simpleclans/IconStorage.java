@@ -116,7 +116,7 @@ public class IconStorage {
         HashSet<MarkerIcon> icons = new HashSet<>();
         for (File icon : files) {
             String name = icon.getName();
-            String nameWithoutExt = name.substring(0, name.lastIndexOf("."));
+            String nameWithoutExt = name.substring(0, name.lastIndexOf(".")).toLowerCase();
             try (FileInputStream stream = new FileInputStream(icon)) {
                 MarkerIcon markerIcon = markerApi.createMarkerIcon(nameWithoutExt, nameWithoutExt, stream);
                 if (markerIcon == null) {

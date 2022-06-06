@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Objects;
 
-import static net.sacredlabyrinth.phaed.dynmap.simpleclans.Preferences.loadPreferences;
 import static org.bukkit.Bukkit.getPluginManager;
 
 public class DynmapSimpleClans extends JavaPlugin {
@@ -77,7 +76,6 @@ public class DynmapSimpleClans extends JavaPlugin {
     }
 
     public void reload() {
-        loadPreferences();
         loadDependencies();
         loadTasks();
         saveDefaultConfig();
