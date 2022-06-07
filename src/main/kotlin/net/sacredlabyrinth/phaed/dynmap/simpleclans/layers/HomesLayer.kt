@@ -1,22 +1,29 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers
 
 import com.google.gson.JsonParser
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.debug
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.lang
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.IconStorage
 import net.sacredlabyrinth.phaed.simpleclans.Clan
+import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager
 import net.sacredlabyrinth.phaed.simpleclans.utils.VanishUtils
+import org.dynmap.markers.Marker
 import org.dynmap.markers.MarkerAPI
 
-class HomesLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
-    Layer("simpleclans.layers.home", iconStorage, config, markerAPI) {
+class HomesLayer(
+    private val clanManager: ClanManager,
+    iconStorage: IconStorage,
+    config: LayerConfig,
+    markerAPI: MarkerAPI
+) : Layer("simpleclans.layers.home", iconStorage, config, markerAPI) {
 
     init {
-        for (clan in getClansWithHome()) {
-            upsertMarker(clan)
-        }
+        // Delete old markers
+        markerSet.markers.forEach(Marker::deleteMarker)
+
+        // Create/update new markers
+        getClansWithHome().forEach(this::upsertMarker)
     }
 
     fun upsertMarker(clan: Clan) {
@@ -25,7 +32,8 @@ class HomesLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: Marke
         val world = loc?.world ?: return
         val worldName = world.name
 
-        val iconName = JsonParser().parse(clan.flags).asJsonObject.get("defaulticon").asString
+        val iconName = JsonParser().parse(clan.flags).asJsonObject.get("defaulticon")?.asString
+            ?: iconStorage.defaultIconName
         val icon = iconStorage.getIcon(iconName)
         val label = formatClanLabel(clan)
 
@@ -81,10 +89,10 @@ class HomesLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: Marke
         return Helper.colorToHTML(label)
     }
 
-    private fun getClansWithHome(): List<Clan> {
-        return DynmapSimpleClans.getInstance().clanManager.clans
+    private fun getClansWithHome(): Set<Clan> {
+        return clanManager.clans
             .filter { clan -> clan.homeLocation != null }
             .filter { clan -> clan.homeLocation!!.world != null }
-            .toList()
+            .toSet()
     }
 }

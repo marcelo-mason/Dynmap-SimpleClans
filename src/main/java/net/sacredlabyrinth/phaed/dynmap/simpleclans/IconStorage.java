@@ -90,6 +90,11 @@ public class IconStorage {
         return icon.orElse(defaultIcon);
     }
 
+    @NotNull
+    public String getDefaultIconName() {
+        return defaultIcon.getMarkerIconID();
+    }
+
     /**
      * Checks if the icon is contained in IconStorage
      *

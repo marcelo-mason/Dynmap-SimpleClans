@@ -24,7 +24,7 @@ class KillsLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: Marke
         val marker = markerSet.createMarker(
             kill.time.toString(), formatLabel(kill), true,
             worldName, loc.x, loc.y, loc.z,
-            iconStorage.getIcon("blood"), false
+            iconStorage.getIcon(iconStorage.defaultIconName), false
         )
 
         object : BukkitRunnable() {

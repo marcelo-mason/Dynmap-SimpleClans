@@ -2,6 +2,7 @@ package net.sacredlabyrinth.phaed.dynmap.simpleclans
 
 import net.sacredlabyrinth.phaed.simpleclans.Kill
 import net.sacredlabyrinth.phaed.simpleclans.events.AddKillEvent
+import net.sacredlabyrinth.phaed.simpleclans.events.DisbandClanEvent
 import net.sacredlabyrinth.phaed.simpleclans.events.PlayerHomeSetEvent
 import org.bukkit.Bukkit.getScheduler
 import org.bukkit.event.EventHandler
@@ -16,6 +17,9 @@ class DynmapSimpleClansListener(val plugin: DynmapSimpleClans) : Listener {
         // Running the runnable on next tick to get the actual clan home location
         getScheduler().runTask(plugin, Runnable { plugin.homeLayer?.upsertMarker(event.clan) })
     }
+
+    @EventHandler(priority = MONITOR)
+    fun onDisband(event: DisbandClanEvent) = plugin.homeLayer?.markerSet?.findMarker(event.clan.tag)?.deleteMarker()
 
     @EventHandler(priority = MONITOR)
     fun onKill(event: AddKillEvent) =

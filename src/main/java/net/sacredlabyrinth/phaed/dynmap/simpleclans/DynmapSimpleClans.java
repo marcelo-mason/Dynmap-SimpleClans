@@ -9,6 +9,7 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
@@ -25,9 +26,9 @@ public class DynmapSimpleClans extends JavaPlugin {
     private DynmapAPI dynmapApi;
     private MarkerAPI markerApi;
     private SimpleClans simpleclans;
-    private HomesLayer homesLayer;
-    private KillsLayer killsLayer;
-    private String defaultHomeIcon;
+    private @Nullable HomesLayer homesLayer;
+    private @Nullable KillsLayer killsLayer;
+    private FileConfiguration configuration;
 
     /**
      * @return The plugin instance
@@ -41,7 +42,7 @@ public class DynmapSimpleClans extends JavaPlugin {
      * @return Translated colored message from key
      */
     public static String lang(@NotNull String messageKey) {
-        String msg = instance.getConfig().getString("language." + messageKey);
+        String msg = instance.getConfiguration().getString("language." + messageKey);
         return msg == null ?
                 String.format("Missing language for %s key", messageKey) :
                 ChatColor.translateAlternateColorCodes('&', msg);
@@ -54,7 +55,7 @@ public class DynmapSimpleClans extends JavaPlugin {
      * @param respectUserDecision should the message be sent if debug is false?
      */
     public static void debug(String message, boolean respectUserDecision) {
-        if (respectUserDecision && !instance.getConfig().getBoolean("debug", false)) {
+        if (respectUserDecision && !instance.getConfiguration().getBoolean("debug", false)) {
             return;
         }
 
@@ -68,32 +69,37 @@ public class DynmapSimpleClans extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
+        saveDefaultConfig();
         reload();
-
         new CommandManager(this);
         getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
     }
 
-    public void reload() {
-        loadDependencies();
-        loadTasks();
-        saveDefaultConfig();
-        saveDefaultImages();
-        loadLayers();
+    public FileConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public void loadLayers() {
-        ConfigurationSection clanHomesSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.homes"));
-        ConfigurationSection killsSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.kills"));
+    public void reload() {
+        reloadConfig();
+        configuration = getConfig();
 
-        defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
+        loadDependencies();
+        saveDefaultImages(configuration);
+        loadTasks(configuration);
+        loadLayers(configuration);
+    }
+
+    public void loadLayers(FileConfiguration config) {
+        ConfigurationSection clanHomesSection = Objects.requireNonNull(config.getConfigurationSection("layer.homes"));
+        ConfigurationSection killsSection = Objects.requireNonNull(config.getConfigurationSection("layer.kills"));
+
+        String defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
 
         IconStorage homesIcons = new IconStorage(this, "/images/clanhome", defaultHomeIcon, markerApi);
         IconStorage killsIcons = new IconStorage(this, "/images", DefaultIcons.BLOOD.getName(), markerApi);
 
         try {
-            homesLayer = new HomesLayer(homesIcons, new LayerConfig(clanHomesSection), markerApi);
+            homesLayer = new HomesLayer(getClanManager(), homesIcons, new LayerConfig(clanHomesSection), markerApi);
         } catch (IllegalStateException ex) {
             debug(ex.getMessage());
         }
@@ -104,6 +110,7 @@ public class DynmapSimpleClans extends JavaPlugin {
             debug(ex.getMessage());
         }
     }
+
     @NotNull
     public ClanManager getClanManager() {
         return simpleclans.getClanManager();
@@ -123,7 +130,6 @@ public class DynmapSimpleClans extends JavaPlugin {
     public KillsLayer getKillsLayer() {
         return killsLayer;
     }
-
 
     private void loadDependencies() {
         dynmapApi = (DynmapAPI) getServer().getPluginManager().getPlugin("DynMap");
@@ -146,11 +152,14 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
     }
 
-    private void saveDefaultImages() {
+    private void saveDefaultImages(FileConfiguration config) {
         String clanhomePath = DefaultIcons.CLANHOME.getPath();
         String bloodPath = DefaultIcons.BLOOD.getPath();
 
-        if (!new File(getDataFolder(), clanhomePath).exists() && defaultHomeIcon.equalsIgnoreCase(DefaultIcons.CLANHOME.getName())) {
+        boolean usedDefaultIcon = config.getString("layer.homes.default-icon", "clanhome").
+                equalsIgnoreCase(DefaultIcons.CLANHOME.getName());
+
+        if (!new File(getDataFolder(), clanhomePath).exists() && usedDefaultIcon) {
             saveResource(clanhomePath, false);
         }
         if (!new File(getDataFolder(), bloodPath).exists()) {
@@ -158,15 +167,15 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
     }
 
-    private void loadTasks() {
-        if (!getConfig().getBoolean("hide-warring-players", true)) {
+    private void loadTasks(FileConfiguration config) {
+        if (!config.getBoolean("hide-warring-players", true)) {
             new HideWarringClansTask(this);
         }
     }
 
-    enum DefaultIcons {
-        CLANHOME("clanhome", "/images/clanhome.png"),
-        BLOOD("blood", "/images/clanhome/clanhome.png");
+    public enum DefaultIcons {
+        CLANHOME("clanhome", "images/clanhome/clanhome.png"),
+        BLOOD("blood", "images/blood.png");
 
         private final String name;
         private final String path;
