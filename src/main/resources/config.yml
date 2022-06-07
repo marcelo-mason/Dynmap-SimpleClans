@@ -3,7 +3,7 @@ debug: false
 language:
   layer-disabled: "&cLayer is disabled!"
   no-permission: "&cYou don't have permission!"
-  reloading: "&bReloading plugin..."
+  reloaded: "&aPlugin was successfully reloaded!"
   not-member: "&cYou must be member of a clan"
   icon-changed: "&bThe icon was set successfully! The change will take effect soon..."
   icon-not-found: "&cIcon not found"

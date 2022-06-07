@@ -73,8 +73,8 @@ public final class CommandManager implements TabExecutor {
             return true;
         }
 
-        sender.sendMessage(lang("reloading"));
         plugin.reload();
+        sender.sendMessage(lang("reloaded"));
 
         return true;
     }
@@ -127,7 +127,7 @@ public final class CommandManager implements TabExecutor {
         }
 
         if (args.length == 1) {
-            return Arrays.asList("seticon", "help");
+            return Arrays.asList("seticon", "help", "reload");
         }
 
         if (args[0].equalsIgnoreCase("seticon")) {
