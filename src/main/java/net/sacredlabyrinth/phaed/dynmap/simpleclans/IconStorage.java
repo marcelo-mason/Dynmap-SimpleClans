@@ -22,6 +22,15 @@ public class IconStorage {
 
     /**
      * Creates an unmodified storage for {@link MarkerIcon}.
+     * <pre>
+     *  Firstly, it checks on working path validity and throws the error.
+     *
+     *  After it creates a default icon.
+     *  It took the default icon from plugin resources
+     *  if can't find it in the icons set by any reason.
+     *
+     *  Finally, it adds all icons from the working directory to icon set.
+     * </pre>
      *
      * @param plugin          The plugin instance
      * @param workingPath     The path of working directory, where icons stored.
