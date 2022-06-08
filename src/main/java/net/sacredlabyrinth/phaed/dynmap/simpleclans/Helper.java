@@ -1,5 +1,7 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LayerConfig;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.debug;
+import static net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans.lang;
 
 public final class Helper {
 
@@ -49,6 +52,34 @@ public final class Helper {
 
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+    public static String getClanLabel(LayerConfig config, Clan clan) {
+        String inactive = String.format("%s/%s", clan.getInactiveDays(), clan.getMaxInactiveDays());
+        String onlineMembers = String.format("%s/%s", clan.getOnlineMembers(), clan.getSize());
+        String status = (clan.isVerified() ? lang("verified") : lang("unverified"));
+        String feeEnabled = (clan.isMemberFeeEnabled() ? lang("fee-enabled") : lang("fee-disabled"));
+
+        String label = config.getString("format", "{clan} &8(home)")
+                .replace("{clan}", clan.getName())
+                .replace("{tag}", clan.getTag())
+                .replace("{member_count}", String.valueOf(clan.getMembers().size()))
+                .replace("{inactive}", inactive)
+                .replace("{founded}", clan.getFoundedString())
+                .replace("{rival}", String.valueOf(clan.getTotalRival()))
+                .replace("{neutral}", String.valueOf(clan.getTotalNeutral()))
+                .replace("{deaths}", String.valueOf(clan.getTotalDeaths()))
+                .replace("{kdr}", String.valueOf(clan.getTotalKDR()))
+                .replace("{civilian}", String.valueOf(clan.getTotalCivilian()))
+                .replace("{members_online}", onlineMembers)
+                .replace("{leaders}", clan.getLeadersString("", ", "))
+                .replace("{allies}", clan.getAllyString(", ", null))
+                .replace("{rivals}", clan.getRivalString(", ", null))
+                .replace("{fee_value}", String.valueOf(clan.getMemberFee()))
+                .replace("{status}", status)
+                .replace("{fee_enabled}", feeEnabled);
+
+        return Helper.colorToHTML(label);
     }
 
     public enum HEXColor {
