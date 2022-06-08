@@ -115,6 +115,12 @@ public final class Helper {
             }
         }
 
+        public static HEXColor of(@NotNull String chatColorChar) {
+            String color = chatColorChar.replace("§", "").replace("&", "");
+            ChatColor chatColor = ChatColor.getByChar(color);
+            return chatColor != null ? of(chatColor) : HEXColor.WHITE;
+        }
+
         public String getCode() {
             return code;
         }
