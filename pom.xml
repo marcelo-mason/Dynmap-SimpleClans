@@ -167,9 +167,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+            <groupId>com.github.RoinujNosde</groupId>
             <artifactId>SimpleClans</artifactId>
-            <version>2.16.2</version>
+            <version>dev-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -217,10 +217,10 @@
 
     <!-- Repositories -->
     <repositories>
-        <repository>
-            <id>roinujnosde-repo-releases</id>
-            <url>https://repo.roinujnosde.me/releases</url>
-        </repository>
+            <repository>
+                <id>jitpack.io</id>
+                <url>https://jitpack.io</url>
+            </repository>
         <repository>
             <id>dynmap-repo</id>
             <url>https://repo.mikeprimm.com</url>
