@@ -2,6 +2,7 @@ package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.HomesLayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.KillsLayer;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LandsLayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LayerConfig;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.tasks.HideWarringClansTask;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.util.Objects;
 
 import static org.bukkit.Bukkit.getPluginManager;
+import static org.bukkit.Bukkit.getScheduler;
 
 public class DynmapSimpleClans extends JavaPlugin {
     private static DynmapSimpleClans instance;
@@ -28,6 +30,7 @@ public class DynmapSimpleClans extends JavaPlugin {
     private SimpleClans simpleclans;
     private @Nullable HomesLayer homesLayer;
     private @Nullable KillsLayer killsLayer;
+    private LandsLayer landsLayer;
     private FileConfiguration configuration;
 
     /**
@@ -92,6 +95,7 @@ public class DynmapSimpleClans extends JavaPlugin {
     public void loadLayers(FileConfiguration config) {
         ConfigurationSection clanHomesSection = Objects.requireNonNull(config.getConfigurationSection("layer.homes"));
         ConfigurationSection killsSection = Objects.requireNonNull(config.getConfigurationSection("layer.kills"));
+        ConfigurationSection landsSection = Objects.requireNonNull(config.getConfigurationSection("layer.lands"));
 
         String defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
 
@@ -106,6 +110,14 @@ public class DynmapSimpleClans extends JavaPlugin {
 
         try {
             killsLayer = new KillsLayer(killsIcons, new LayerConfig(killsSection), markerApi);
+        } catch (IllegalStateException ex) {
+            debug(ex.getMessage());
+        }
+
+        try {
+            // Running on next ticks to safely receive lands coordinates
+            getScheduler().runTask(this, () ->
+                    landsLayer = new LandsLayer(getClanManager(), simpleclans.getProtectionManager(), new LayerConfig(landsSection), markerApi));
         } catch (IllegalStateException ex) {
             debug(ex.getMessage());
         }
@@ -131,6 +143,11 @@ public class DynmapSimpleClans extends JavaPlugin {
         return killsLayer;
     }
 
+    @Nullable
+    public LandsLayer getLandsLayer() {
+        return landsLayer;
+    }
+    
     private void loadDependencies() {
         dynmapApi = (DynmapAPI) getServer().getPluginManager().getPlugin("DynMap");
         simpleclans = SimpleClans.getInstance();
