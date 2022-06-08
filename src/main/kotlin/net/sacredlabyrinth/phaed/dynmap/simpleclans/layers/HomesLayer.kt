@@ -50,7 +50,7 @@ class HomesLayer(
     }
 
     private fun isHidden(tag: String, worldName: String): Boolean {
-        val hidden = config.section.getStringList("hidden-markers")
+        val hidden = config.getStringList("hidden-markers")
         return hidden.contains(tag) || hidden.contains("world:$worldName")
     }
 

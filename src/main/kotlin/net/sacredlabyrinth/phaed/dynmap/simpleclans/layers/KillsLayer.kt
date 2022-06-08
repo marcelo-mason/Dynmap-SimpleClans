@@ -3,12 +3,13 @@ package net.sacredlabyrinth.phaed.dynmap.simpleclans.layers
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.Helper
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.IconStorage
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LayerConfig.LayerField.FORMAT
 import net.sacredlabyrinth.phaed.simpleclans.Kill
 import org.bukkit.scheduler.BukkitRunnable
 import org.dynmap.markers.MarkerAPI
 
-class KillsLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
-    Layer("simpleclans.layers.kill", iconStorage, config, markerAPI) {
+class KillsLayer(private val iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
+    Layer("simpleclans.layers.kill", config, markerAPI) {
 
     fun createMarker(kill: Kill) {
         val vclan = kill.victim.clan
@@ -16,8 +17,8 @@ class KillsLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: Marke
         val loc = victim.location
         val worldName = loc.world?.name
 
-        if (vclan == null && !config.section.getBoolean("show.clan-players", true) ||
-            vclan != null && !config.section.getBoolean("show.civilians", true)) {
+        if (vclan == null && !config.getBoolean("show.clan-players", true) ||
+            vclan != null && !config.getBoolean("show.civilians", true)) {
             return
         }
 
@@ -29,11 +30,11 @@ class KillsLayer(iconStorage: IconStorage, config: LayerConfig, markerAPI: Marke
 
         object : BukkitRunnable() {
             override fun run() = marker.deleteMarker()
-        }.runTaskLater(DynmapSimpleClans.getInstance(), config.section.getInt("visible-seconds", 60) * 20L)
+        }.runTaskLater(DynmapSimpleClans.getInstance(), config.getInt("visible-seconds", 60) * 20L)
     }
 
     private fun formatLabel(kill: Kill): String {
-        val label: String = config.section.getString("format", "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)")!!
+        val label: String = config.getString(FORMAT)
             .replace("{victim}", kill.victim.name)
             .replace("{attacker}", kill.killer.name)
             .replace("{vtag}", kill.victim.clan?.tag ?: "")
