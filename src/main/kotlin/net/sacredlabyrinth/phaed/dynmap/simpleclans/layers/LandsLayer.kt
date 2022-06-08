@@ -42,7 +42,6 @@ class LandsLayer(
 
         if (xCoords.isEmpty() || zCoords.isEmpty()) {
             debug("No coordinates found for $tag clan.")
-            debug("Coords are X:${xCoords.asList()}, Z:${xCoords.asList()}")
             return
         }
 
