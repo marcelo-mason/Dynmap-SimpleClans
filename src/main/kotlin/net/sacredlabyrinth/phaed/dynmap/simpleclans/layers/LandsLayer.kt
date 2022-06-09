@@ -65,7 +65,7 @@ class LandsLayer(
         val lineWeight = config.getInt("style.line.weight", 3)
 
         marker.setLabel(label, true)
-        marker.description = clan.description
+        marker.description = Helper.colorToHTML(clan.description)
         marker.setFillStyle(fillOpacity, Integer.valueOf(fillColor.replace("#", ""), 16))
         marker.setLineStyle(lineWeight, lineOpacity, Integer.valueOf(lineColor.replace("#", ""), 16))
         marker.setCornerLocations(xCoords, zCoords)

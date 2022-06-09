@@ -51,7 +51,22 @@ layer:
   kills:
     enable: true
     label: "Deaths"                 # The label for the layer
-    format: "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)"      # Variables: {victim}, {attacker}, {vtag}, {atag}, Colors: &1, New line is pipe symbol: |
+    format:                         # Variables: {time}, {victim}, {attacker}, {vtag}, {atag}, Colors: &1, New line is pipe symbol: |
+      "
+      <table style='text-align: center;'>
+        <tr>
+          <th style='color:#da282f;padding:0.5em;'>{attacker}</th>
+          <th>⚔️</th>
+          <th style='color:#2863e8;padding:0.5em;'>{victim}</th>
+        </tr>
+        <tr>
+          <td>({atag})</td>
+          <td>[{time}]</td>
+          <td>({vtag})</td>
+        </tr>
+      </table>
+      "
+    time-format: "HH:mm:ss"         # the {time} placeholder formatting, (more about time formatting: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html).
     layer-priority: 20              # Ordering priority in layer menu (higher shows on top)
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)

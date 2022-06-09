@@ -7,9 +7,12 @@ import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LayerConfig.LayerFiel
 import net.sacredlabyrinth.phaed.simpleclans.Kill
 import org.bukkit.scheduler.BukkitRunnable
 import org.dynmap.markers.MarkerAPI
+import java.time.format.DateTimeFormatter
 
 class KillsLayer(private val iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
     Layer("simpleclans.layers.kill", config, markerAPI) {
+
+    private val timeFormat:DateTimeFormatter = DateTimeFormatter.ofPattern(config.getString("time-format", "HH:mm:ss"))
 
     fun createMarker(kill: Kill) {
         val vclan = kill.victim.clan
@@ -30,7 +33,7 @@ class KillsLayer(private val iconStorage: IconStorage, config: LayerConfig, mark
 
         object : BukkitRunnable() {
             override fun run() = marker.deleteMarker()
-        }.runTaskLater(DynmapSimpleClans.getInstance(), config.getInt("visible-seconds", 60) * 20L)
+        }.runTaskLater(DynmapSimpleClans.getInstance(), config.getInt("visible-seconds", 300) * 20L)
     }
 
     private fun formatLabel(kill: Kill): String {
@@ -39,6 +42,7 @@ class KillsLayer(private val iconStorage: IconStorage, config: LayerConfig, mark
             .replace("{attacker}", kill.killer.name)
             .replace("{vtag}", kill.victim.clan?.tag ?: "")
             .replace("{atag}", kill.killer.clan?.tag ?: "")
+            .replace("{time}", kill.time.format(timeFormat))
 
         return Helper.colorToHTML(label)
     }
