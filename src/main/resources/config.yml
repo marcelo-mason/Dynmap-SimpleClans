@@ -26,7 +26,7 @@ layer:
     enable: true
     label: "Lands"                 # The label for the layer
     format: "{clan} &8(base)"      # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
-    layer-priority: 10             # Ordering priority in layer menu (higher shows on top)
+    layer-priority: 1              # Ordering priority in layer menu (higher shows on top)
     hide-by-default: false         # Make home layer hidden by default
     min-zoom: 0                    # Set minimum zoom level when markers should be visible (0=default, any zoom)
     hidden-lands: []               # Any clan tags added to this list will be hidden from view.
@@ -44,7 +44,7 @@ layer:
     default-icon: "clanhome"        # Set the icon used if the clan doesn't set one, DON'T type the file extension
     label: "Clan Homes"             # The label for the layer
     format: "{clan} &8(home)"       # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
-    layer-priority: 1               # Ordering priority in layer menu (higher shows on top)
+    layer-priority: 10              # Ordering priority in layer menu (higher shows on top)
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
     hidden-markers: []              # Any clan tags added to this list will be hidden from view, include "world:<worldname>" in the list to hide all clan homes in an entire world
