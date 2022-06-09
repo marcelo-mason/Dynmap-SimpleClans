@@ -1,10 +1,7 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans
 
 import net.sacredlabyrinth.phaed.simpleclans.Kill
-import net.sacredlabyrinth.phaed.simpleclans.events.AddKillEvent
-import net.sacredlabyrinth.phaed.simpleclans.events.DisbandClanEvent
-import net.sacredlabyrinth.phaed.simpleclans.events.PlayerHomeSetEvent
-import net.sacredlabyrinth.phaed.simpleclans.events.TagChangeEvent
+import net.sacredlabyrinth.phaed.simpleclans.events.*
 import org.bukkit.Bukkit.getScheduler
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
@@ -23,14 +20,21 @@ class DynmapSimpleClansListener(val plugin: DynmapSimpleClans) : Listener {
         })
     }
 
-    @EventHandler(priority = MONITOR)
+    @EventHandler(priority = MONITOR, ignoreCancelled = true)
+    fun onHomeClear(event: PlayerHomeClearEvent) {
+        val tag = event.clan.tag
+        plugin.homeLayer?.markerSet?.findMarker(tag)?.deleteMarker()
+        plugin.landsLayer?.markerSet?.findMarker(tag)?.deleteMarker()
+    }
+
+    @EventHandler(priority = MONITOR, ignoreCancelled = true)
     fun onDisband(event: DisbandClanEvent) {
         val tag = event.clan.tag
         plugin.homeLayer?.markerSet?.findMarker(tag)?.deleteMarker()
         plugin.landsLayer?.markerSet?.findMarker(tag)?.deleteMarker()
     }
 
-    @EventHandler
+    @EventHandler(priority = MONITOR, ignoreCancelled = true)
     fun onModtag(event: TagChangeEvent) {
         // Running the runnable on next tick to get the actual clan tag color
         getScheduler().runTask(plugin, Runnable {
@@ -38,7 +42,8 @@ class DynmapSimpleClansListener(val plugin: DynmapSimpleClans) : Listener {
         })
     }
 
-    @EventHandler(priority = MONITOR)
+    @EventHandler(priority = MONITOR, ignoreCancelled = true)
     fun onKill(event: AddKillEvent) =
         plugin.killsLayer?.createMarker(Kill(event.attacker, event.victim, LocalDateTime.now()))
 }
+
