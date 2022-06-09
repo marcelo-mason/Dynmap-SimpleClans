@@ -73,23 +73,32 @@ public class DynmapSimpleClans extends JavaPlugin {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
-        reload();
-        new CommandManager(this);
-        getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
+        if (reload()) {
+            new CommandManager(this);
+            getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
+        }
     }
 
     public FileConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void reload() {
+    public boolean reload() {
         reloadConfig();
         configuration = getConfig();
 
-        loadDependencies();
+        try {
+            loadDependencies();
+        } catch (IllegalStateException ex) {
+            getLogger().severe(ex.getMessage());
+            return false;
+        }
+
         saveDefaultImages(configuration);
         loadTasks(configuration);
         loadLayers(configuration);
+
+        return true;
     }
 
     public void loadLayers(FileConfiguration config) {
@@ -147,19 +156,21 @@ public class DynmapSimpleClans extends JavaPlugin {
     public LandsLayer getLandsLayer() {
         return landsLayer;
     }
-    
-    private void loadDependencies() {
-        dynmapApi = (DynmapAPI) getServer().getPluginManager().getPlugin("DynMap");
-        simpleclans = SimpleClans.getInstance();
 
-        if (simpleclans == null) {
-            getLogger().severe("SimpleClans wasn't found, disabling...");
+    private void loadDependencies() {
+        dynmapApi = (DynmapAPI) getPluginManager().getPlugin("DynMap");
+        simpleclans = (SimpleClans) getPluginManager().getPlugin("SimpleClans");
+
+        if (simpleclans == null || dynmapApi == null) {
             getPluginLoader().disablePlugin(this);
         }
 
+        if (simpleclans == null) {
+            throw new IllegalStateException("SimpleClans wasn't found, disabling...");
+        }
+
         if (dynmapApi == null) {
-            getLogger().severe("Dynmap wasn't found, disabling...");
-            getPluginLoader().disablePlugin(this);
+            throw new IllegalStateException("Dynmap wasn't found, disabling...");
         }
 
         markerApi = dynmapApi.getMarkerAPI();

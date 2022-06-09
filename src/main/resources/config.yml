@@ -8,6 +8,7 @@ language:
   icon-changed: "&bThe icon was set successfully! The change will take effect soon..."
   icon-not-found: "&cIcon not found"
   error-no-icons: "&c* Error, no icons available!" 
+  error-reload: "&c* Error while trying to reload the plugin!"
   not-visible: "&bYou are no longer visible on the map"
   visible: "&bYou are now visible on the map"
   fee-enabled: "enabled"

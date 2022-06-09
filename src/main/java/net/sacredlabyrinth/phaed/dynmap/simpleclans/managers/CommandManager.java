@@ -73,8 +73,11 @@ public final class CommandManager implements TabExecutor {
             return true;
         }
 
-        plugin.reload();
-        sender.sendMessage(lang("reloaded"));
+        if (plugin.reload()) {
+            sender.sendMessage(lang("reloaded"));
+        } else {
+            sender.sendMessage(lang("error-reload"));
+        }
 
         return true;
     }
