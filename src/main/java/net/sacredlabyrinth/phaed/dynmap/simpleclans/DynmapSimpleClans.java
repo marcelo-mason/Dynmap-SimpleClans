@@ -1,181 +1,192 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
-import java.io.File;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.IconStorage.DefaultIcons;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.HomesLayer;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.KillsLayer;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LandsLayer;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LayerConfig;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.tasks.HideWarringClansTask;
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
+import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.ClanHomes;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.Kills;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.CommandManager;
-import net.sacredlabyrinth.phaed.dynmap.simpleclans.managers.PlayerManager;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
-import net.sacredlabyrinth.phaed.simpleclans.managers.SettingsManager;
+import java.io.File;
+import java.util.Objects;
+
+import static org.bukkit.Bukkit.getPluginManager;
+import static org.bukkit.Bukkit.getScheduler;
 
 public class DynmapSimpleClans extends JavaPlugin {
-	private static DynmapSimpleClans instance;
-	private static final Logger log = Logger.getLogger("Minecraft");
-	private static final String LOG_PREFIX = "[Dynmap-SimpleClans] ";
+    private static DynmapSimpleClans instance;
+    private DynmapAPI dynmapApi;
+    private MarkerAPI markerApi;
+    private SimpleClans simpleclans;
+    private @Nullable HomesLayer homesLayer;
+    private @Nullable KillsLayer killsLayer;
+    private LandsLayer landsLayer;
 
-	private Plugin dynmap;
-	private DynmapAPI dynmapApi;
-	private MarkerAPI markerApi;
-	private SimpleClans simpleclansCore;
+    /**
+     * @return The plugin instance
+     */
+    public static DynmapSimpleClans getInstance() {
+        return instance;
+    }
 
-	private PlayerManager playerManager;
-	private ClanHomes clanHomes;
-	private Kills kills;
-	private Toggles toggles;
+    /**
+     * @param messageKey The key
+     * @return Translated colored message from key
+     */
+    public static String lang(@NotNull String messageKey) {
+        String msg = instance.getConfig().getString("language." + messageKey);
+        return msg == null ?
+                String.format("Missing language for %s key", messageKey) :
+                ChatColor.translateAlternateColorCodes('&', msg);
+    }
 
-	@Override
-	public void onEnable() {
-		instance = this;
-		info("initializing");
+    /**
+     * Sends a debug message to the console, respecting the user decision.
+     *
+     * @param message             message to send
+     * @param respectUserDecision should the message be sent if debug is false?
+     */
+    public static void debug(String message, boolean respectUserDecision) {
+        if (respectUserDecision && !instance.getConfig().getBoolean("debug", false)) {
+            return;
+        }
 
-		playerManager = new PlayerManager();
-		CommandManager commandManager = new CommandManager();
+        instance.getLogger().info(message);
+    }
 
-		initDynmap();
-		initSimpleClans();
-		activate();
+    public static void debug(String message) {
+        debug(message, true);
+    }
 
-		getServer().getPluginManager().registerEvents(new DynmapSimpleClansListener(), this);
-		Objects.requireNonNull(getCommand("clanmap")).setExecutor(commandManager);
-	}
+    @Override
+    public void onEnable() {
+        instance = this;
+        saveDefaultConfig();
+        if (reload()) {
+            loadTasks();
+            new CommandManager(this);
+            getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
+        }
+    }
 
-	public void activate() {
-		if (!dynmap.isEnabled() || simpleclansCore == null) {
-			return;
-		}
+    public boolean reload() {
+        reloadConfig();
 
-		initApis();
+        try {
+            loadDependencies();
+        } catch (IllegalStateException ex) {
+            getLogger().severe(ex.getMessage());
+            getPluginLoader().disablePlugin(this);
+            return false;
+        }
 
-		reloadConfig();
-		saveDefaultConfig();
-		// saving images
-		saveDefaultImages();
+        saveDefaultImages();
+        loadLayers();
 
-		// set up layers
+        return true;
+    }
 
-		clanHomes = new ClanHomes();
-		toggles = new Toggles();
-		kills = new Kills();
+    public void loadLayers() {
+        ConfigurationSection clanHomesSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.homes"));
+        ConfigurationSection killsSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.kills"));
+        ConfigurationSection landsSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.lands"));
 
-		info("version " + this.getDescription().getVersion() + " is activated");
-	}
+        String defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
 
-	public void saveDefaultImages() {
-		if (!new File(getDataFolder(), "/images/clanhome").exists()) {
-			saveResource("images/clanhome/clanhome.png", false);
-		}
-		if (!new File(getDataFolder(), "/images/blood.png").exists()) {
-			saveResource("images/blood.png", false);
-		}
-	}
+        IconStorage homesIcons = new IconStorage(this, "/images/clanhome", defaultHomeIcon, markerApi);
+        IconStorage killsIcons = new IconStorage(this, "/images", DefaultIcons.BLOOD.getName(), markerApi);
 
-	@Override
-	public void onDisable() {
-		cleanup();
-	}
+        try {
+            homesLayer = new HomesLayer(getClanManager(), homesIcons, new LayerConfig(clanHomesSection), markerApi);
+        } catch (IllegalStateException ex) {
+            debug(ex.getMessage());
+        }
 
-	public void cleanup() {
-		if (clanHomes != null) {
-			clanHomes.cleanup();
-		}
-		if (toggles != null) {
-			toggles.cleanup();
-		}
-		if (kills != null) {
-			kills.cleanup();
-		}
-	}
+        try {
+            killsLayer = new KillsLayer(killsIcons, new LayerConfig(killsSection), markerApi);
+        } catch (IllegalStateException ex) {
+            debug(ex.getMessage());
+        }
 
-	private void initDynmap() {
-		dynmap = getServer().getPluginManager().getPlugin("dynmap");
+        try {
+            // Running on next ticks to safely receive lands coordinates
+            getScheduler().runTask(this, () ->
+                    landsLayer = new LandsLayer(getClanManager(), simpleclans.getProtectionManager(), new LayerConfig(landsSection), markerApi));
+        } catch (IllegalStateException ex) {
+            debug(ex.getMessage());
+        }
+    }
 
-		if (dynmap == null) {
-			severe("Cannot find dynmap!");
-			return;
-		}
-		dynmapApi = (DynmapAPI) dynmap;
-	}
+    @NotNull
+    public ClanManager getClanManager() {
+        return simpleclans.getClanManager();
+    }
 
-	private void initSimpleClans() {
-		Plugin p = getServer().getPluginManager().getPlugin("SimpleClans");
+    @NotNull
+    public DynmapAPI getDynmapApi() {
+        return dynmapApi;
+    }
 
-		if (p != null) {
-			simpleclansCore = (SimpleClans) p;
-			return;
-		}
+    @Nullable
+    public HomesLayer getHomeLayer() {
+        return homesLayer;
+    }
 
-		severe("Cannot find SimpleClans!");
-	}
+    @Nullable
+    public KillsLayer getKillsLayer() {
+        return killsLayer;
+    }
 
-	private void initApis() {
-		markerApi = dynmapApi.getMarkerAPI();
+    @Nullable
+    public LandsLayer getLandsLayer() {
+        return landsLayer;
+    }
 
-		if (markerApi == null) {
-			severe("Error loading Dynmap marker API!");
-		}
-	}
+    private void loadDependencies() {
+        dynmapApi = (DynmapAPI) getPluginManager().getPlugin("DynMap");
+        simpleclans = (SimpleClans) getPluginManager().getPlugin("SimpleClans");
 
-	public static void info(String msg) {
-		log.log(Level.INFO, LOG_PREFIX + msg);
-	}
+        if (simpleclans == null) {
+            throw new IllegalStateException("SimpleClans wasn't found, disabling...");
+        }
 
-	public static void severe(String msg) {
-		log.log(Level.SEVERE, LOG_PREFIX + msg);
-	}
+        if (dynmapApi == null) {
+            throw new IllegalStateException("Dynmap wasn't found, disabling...");
+        }
+        markerApi = dynmapApi.getMarkerAPI();
+        if (markerApi == null) {
+            throw new IllegalStateException("'markers' component has not been configured in DynMap! Disabling...");
+        }
+    }
 
-	public static DynmapSimpleClans getInstance() {
-		return instance;
-	}
+    private void saveDefaultImages() {
+        String clanhomePath = DefaultIcons.CLANHOME.getPath();
+        String bloodPath = DefaultIcons.BLOOD.getPath();
 
-	public MarkerAPI getMarkerApi() {
-		return markerApi;
-	}
+        boolean usedDefaultIcon = getConfig().getString("layer.homes.default-icon", "clanhome").
+                equalsIgnoreCase(DefaultIcons.CLANHOME.getName());
 
-	public ClanManager getClanManager() {
-		return simpleclansCore.getClanManager();
-	}
+        if (!new File(getDataFolder(), clanhomePath).exists() && usedDefaultIcon) {
+            saveResource(clanhomePath, false);
+        }
+        if (!new File(getDataFolder(), bloodPath).exists()) {
+            saveResource(bloodPath, false);
+        }
+    }
 
-	public DynmapAPI getDynmapApi() {
-		return dynmapApi;
-	}
-
-	public ClanHomes getClanHomes() {
-		return clanHomes;
-	}
-
-	public Kills getKills() {
-		return kills;
-	}
-
-	public PlayerManager getPlayerManager() {
-		return playerManager;
-	}
-
-	public SettingsManager getSimpleClansSettingsManager() {
-		return simpleclansCore.getSettingsManager();
-	}
-	
-	public String getLang(String lang) {
-		String msg = null;
-		if (lang != null) {
-			msg = getConfig().getString("language." + lang);
-		}
-		if (msg == null) {
-			msg = "Missing language for " + lang;
-		} else {
-			msg = ChatColor.translateAlternateColorCodes('&', msg);
-		}
-		return msg;
-	}
+    private void loadTasks() {
+        if (!getConfig().getBoolean("hide-warring-players", true)) {
+            new HideWarringClansTask(this);
+        }
+    }
 }

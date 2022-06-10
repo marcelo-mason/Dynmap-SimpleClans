@@ -1,13 +1,14 @@
 # Dynmap-SimpleClans configuration
+debug: false
 language:
+  layer-disabled: "&cLayer is disabled!"
   no-permission: "&cYou don't have permission!"
-  reloading: "&bReloading plugin..."
+  reloaded: "&aPlugin was successfully reloaded!"
   not-member: "&cYou must be member of a clan"
   icon-changed: "&bThe icon was set successfully! The change will take effect soon..."
   icon-not-found: "&cIcon not found"
-  available-icons: "&bAvailable icons:"
-  icon-line: "&b* @icon"
   error-no-icons: "&c* Error, no icons available!" 
+  error-reload: "&c* Error while trying to reload the plugin!"
   not-visible: "&bYou are no longer visible on the map"
   visible: "&bYou are now visible on the map"
   fee-enabled: "enabled"
@@ -16,35 +17,60 @@ language:
   unverified: "unverified"
 help-command:
   - "&b[Dynmap-SimpleClans] Commands:"
-  - "&b/clanmap listicons - lists the available icons"
   - "&b/clanmap seticon [iconname] - sets the clan icon"
-  - "&b/clanmap toggle - toggles your visibility on the map"
   - "&c/clanmap reload - reloads the plugin and its configurations"
   - "&b/clanmap help - shows this help"
-toggles:
-  update-seconds: 60                # How often the toggles are updated
-  hide-warring: true                # Hides members of clans while the clans are at war
-  hide-players-by-default: false     # Hides players by default
+hide-warring-players: true         # Hide members of clans while the clans are at war
 layer:
+  lands:
+    enable: true
+    label: "Lands"                  # The label for the layer
+    format: "{clan} &8(base)"       # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
+    layer-priority: 1               # Ordering priority in layer menu (higher shows on top)
+    hide-by-default: false          # Make home layer hidden by default
+    min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
+    hidden-lands: []                # Any clan tags added to this list will be hidden from view.
+    style:
+      based-on-tag: false           # Fill and Line styles will be based on the clan tag colors
+      fill:
+        color: "#57b356"            # The default color (green) of the fill
+        opacity: 0.35               # The default opacity for the fill
+      line:
+        color: "#2d682d"            # The default color (green) of the line
+        opacity: 0.8                # The default opacity for the line
+        weight: 3                   # The default weight of the line
   homes:
     enable: true
-    update-seconds: 300             # How often the markers are updated
     default-icon: "clanhome"        # Set the icon used if the clan doesn't set one, DON'T type the file extension
     label: "Clan Homes"             # The label for the layer
     format: "{clan} &8(home)"       # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
-    layer-priority: 1               # Ordering priority in layer menu (higher shows on top)
+    layer-priority: 10              # Ordering priority in layer menu (higher shows on top)
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
     hidden-markers: []              # Any clan tags added to this list will be hidden from view, include "world:<worldname>" in the list to hide all clan homes in an entire world
   kills:
     enable: true
-    update-seconds: 60              # How often the markers are updated
     label: "Deaths"                 # The label for the layer
-    format: "{vtag}&f{victim}|&7(killed by: {atag}&7{attacker}&7)"      # Variables: {victim}, {attacker}, {vtag}, {atag}, Colors: &1, New line is pipe symbol: |
+    format:                         # Variables: {time}, {victim}, {attacker}, {vtag}, {atag}, Colors: &1, New line is pipe symbol: |
+      "
+      <table style='text-align: center;'>
+        <tr>
+          <th style='color:#da282f;padding:0.5em;'>{attacker}</th>
+          <th>⚔️</th>
+          <th style='color:#2863e8;padding:0.5em;'>{victim}</th>
+        </tr>
+        <tr>
+          <td>({atag})</td>
+          <td>[{time}]</td>
+          <td>({vtag})</td>
+        </tr>
+      </table>
+      "
+    time-format: "HH:mm:ss"         # the {time} placeholder formatting, (more about time formatting: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html).
     layer-priority: 20              # Ordering priority in layer menu (higher shows on top)
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
     visible-seconds: 300            # How long the marker will stay visible for
-    show:
-      clan-players: true            # Show deaths of clan players
-      civilians: true               # Show deaths of civilians
+    hide:
+      clan-players: false           # Hide deaths of clan players
+      civilians: false              # Hide deaths of civilians
