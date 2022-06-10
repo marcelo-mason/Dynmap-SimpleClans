@@ -175,8 +175,8 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
         markerApi = dynmapApi.getMarkerAPI();
         if (markerApi == null) {
-            getLogger().severe("'markers' component has not been configured in DynMap! Disabling...");
             getPluginLoader().disablePlugin(this);
+            throw new IllegalStateException("'markers' component has not been configured in DynMap! Disabling...");
         }
     }
 
