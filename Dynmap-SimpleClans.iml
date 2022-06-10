@@ -3,9 +3,9 @@
   <component name="AutoImportedSourceRoots">
     <option name="directories">
       <list>
-        <option value="C:\Users\User\IdeaProjects\Dynmap-SimpleClans/src/main/java" />
-        <option value="C:\Users\User\IdeaProjects\Dynmap-SimpleClans/src/main/kotlin" />
-        <option value="C:\Users\User\IdeaProjects\Dynmap-SimpleClans/src/test/java" />
+        <option value="src/main/java" />
+        <option value="src/main/kotlin" />
+        <option value="src/test/java" />
       </list>
     </option>
   </component>
