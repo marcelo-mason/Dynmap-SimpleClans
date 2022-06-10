@@ -60,7 +60,7 @@ public final class CommandManager implements TabExecutor {
      * Shows help command to the sender
      */
     private void help(@NotNull CommandSender sender) {
-        plugin.getConfiguration().getStringList("help-command").forEach(s ->
+        plugin.getConfig().getStringList("help-command").forEach(s ->
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s)));
     }
 

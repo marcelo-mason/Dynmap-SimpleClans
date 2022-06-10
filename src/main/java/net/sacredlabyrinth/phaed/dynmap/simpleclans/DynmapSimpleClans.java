@@ -11,7 +11,6 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.MarkerAPI;
@@ -32,7 +31,6 @@ public class DynmapSimpleClans extends JavaPlugin {
     private @Nullable HomesLayer homesLayer;
     private @Nullable KillsLayer killsLayer;
     private LandsLayer landsLayer;
-    private FileConfiguration configuration;
 
     /**
      * @return The plugin instance
@@ -46,7 +44,7 @@ public class DynmapSimpleClans extends JavaPlugin {
      * @return Translated colored message from key
      */
     public static String lang(@NotNull String messageKey) {
-        String msg = instance.getConfiguration().getString("language." + messageKey);
+        String msg = instance.getConfig().getString("language." + messageKey);
         return msg == null ?
                 String.format("Missing language for %s key", messageKey) :
                 ChatColor.translateAlternateColorCodes('&', msg);
@@ -59,7 +57,7 @@ public class DynmapSimpleClans extends JavaPlugin {
      * @param respectUserDecision should the message be sent if debug is false?
      */
     public static void debug(String message, boolean respectUserDecision) {
-        if (respectUserDecision && !instance.getConfiguration().getBoolean("debug", false)) {
+        if (respectUserDecision && !instance.getConfig().getBoolean("debug", false)) {
             return;
         }
 
@@ -80,13 +78,8 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
     }
 
-    public FileConfiguration getConfiguration() {
-        return configuration;
-    }
-
     public boolean reload() {
         reloadConfig();
-        configuration = getConfig();
 
         try {
             loadDependencies();
@@ -95,17 +88,17 @@ public class DynmapSimpleClans extends JavaPlugin {
             return false;
         }
 
-        saveDefaultImages(configuration);
-        loadTasks(configuration);
-        loadLayers(configuration);
+        saveDefaultImages();
+        loadTasks();
+        loadLayers();
 
         return true;
     }
 
-    public void loadLayers(FileConfiguration config) {
-        ConfigurationSection clanHomesSection = Objects.requireNonNull(config.getConfigurationSection("layer.homes"));
-        ConfigurationSection killsSection = Objects.requireNonNull(config.getConfigurationSection("layer.kills"));
-        ConfigurationSection landsSection = Objects.requireNonNull(config.getConfigurationSection("layer.lands"));
+    public void loadLayers() {
+        ConfigurationSection clanHomesSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.homes"));
+        ConfigurationSection killsSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.kills"));
+        ConfigurationSection landsSection = Objects.requireNonNull(getConfig().getConfigurationSection("layer.lands"));
 
         String defaultHomeIcon = clanHomesSection.getString("default-icon", DefaultIcons.CLANHOME.getName());
 
@@ -180,11 +173,11 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
     }
 
-    private void saveDefaultImages(FileConfiguration config) {
+    private void saveDefaultImages() {
         String clanhomePath = DefaultIcons.CLANHOME.getPath();
         String bloodPath = DefaultIcons.BLOOD.getPath();
 
-        boolean usedDefaultIcon = config.getString("layer.homes.default-icon", "clanhome").
+        boolean usedDefaultIcon = getConfig().getString("layer.homes.default-icon", "clanhome").
                 equalsIgnoreCase(DefaultIcons.CLANHOME.getName());
 
         if (!new File(getDataFolder(), clanhomePath).exists() && usedDefaultIcon) {
@@ -195,8 +188,8 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
     }
 
-    private void loadTasks(FileConfiguration config) {
-        if (!config.getBoolean("hide-warring-players", true)) {
+    private void loadTasks() {
+        if (!getConfig().getBoolean("hide-warring-players", true)) {
             new HideWarringClansTask(this);
         }
     }
