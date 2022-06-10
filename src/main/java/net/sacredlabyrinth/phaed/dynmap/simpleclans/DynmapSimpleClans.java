@@ -86,6 +86,7 @@ public class DynmapSimpleClans extends JavaPlugin {
             loadDependencies();
         } catch (IllegalStateException ex) {
             getLogger().severe(ex.getMessage());
+            getPluginLoader().disablePlugin(this);
             return false;
         }
 
@@ -155,10 +156,6 @@ public class DynmapSimpleClans extends JavaPlugin {
         dynmapApi = (DynmapAPI) getPluginManager().getPlugin("DynMap");
         simpleclans = (SimpleClans) getPluginManager().getPlugin("SimpleClans");
 
-        if (simpleclans == null || dynmapApi == null) {
-            getPluginLoader().disablePlugin(this);
-        }
-
         if (simpleclans == null) {
             throw new IllegalStateException("SimpleClans wasn't found, disabling...");
         }
@@ -168,7 +165,6 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
         markerApi = dynmapApi.getMarkerAPI();
         if (markerApi == null) {
-            getPluginLoader().disablePlugin(this);
             throw new IllegalStateException("'markers' component has not been configured in DynMap! Disabling...");
         }
     }
