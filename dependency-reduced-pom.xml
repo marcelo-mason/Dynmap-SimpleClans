@@ -4,7 +4,7 @@
   <groupId>net.sacredlabyrinth.phaed.dynmap.simpleclans</groupId>
   <artifactId>Dynmap-SimpleClans</artifactId>
   <name>Dynmap-SimpleClans</name>
-  <version>2.0.3</version>
+  <version>1.4.3-SNAPSHOT</version>
   <url>https://github.com/RoinujNosde/Dynmap-SimpleClans</url>
   <build>
     <defaultGoal>clean install</defaultGoal>
@@ -297,4 +297,3 @@
     <kotlin.version>1.6.21</kotlin.version>
   </properties>
 </project>
-
