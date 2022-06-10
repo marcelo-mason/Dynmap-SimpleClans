@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.phaed.dynmap.simpleclans;
 
+import net.sacredlabyrinth.phaed.dynmap.simpleclans.IconStorage.DefaultIcons;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.HomesLayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.KillsLayer;
 import net.sacredlabyrinth.phaed.dynmap.simpleclans.layers.LandsLayer;
@@ -172,7 +173,6 @@ public class DynmapSimpleClans extends JavaPlugin {
         if (dynmapApi == null) {
             throw new IllegalStateException("Dynmap wasn't found, disabling...");
         }
-
         markerApi = dynmapApi.getMarkerAPI();
         if (markerApi == null) {
             getLogger().severe("'markers' component has not been configured in DynMap! Disabling...");
@@ -198,27 +198,6 @@ public class DynmapSimpleClans extends JavaPlugin {
     private void loadTasks(FileConfiguration config) {
         if (!config.getBoolean("hide-warring-players", true)) {
             new HideWarringClansTask(this);
-        }
-    }
-
-    public enum DefaultIcons {
-        CLANHOME("clanhome", "images/clanhome/clanhome.png"),
-        BLOOD("blood", "images/blood.png");
-
-        private final String name;
-        private final String path;
-
-        DefaultIcons(String name, String path) {
-            this.name = name;
-            this.path = path;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public String getName() {
-            return name;
         }
     }
 }

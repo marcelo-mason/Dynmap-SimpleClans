@@ -146,4 +146,25 @@ public class IconStorage {
 
         return Collections.unmodifiableSet(icons);
     }
+
+    public enum DefaultIcons {
+        CLANHOME("clanhome", "images/clanhome/clanhome.png"),
+        BLOOD("blood", "images/blood.png");
+
+        private final String name;
+        private final String path;
+
+        DefaultIcons(String name, String path) {
+            this.name = name;
+            this.path = path;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 }
