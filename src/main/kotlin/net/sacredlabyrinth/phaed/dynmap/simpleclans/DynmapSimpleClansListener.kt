@@ -36,9 +36,11 @@ class DynmapSimpleClansListener(val plugin: DynmapSimpleClans) : Listener {
 
     @EventHandler(priority = MONITOR, ignoreCancelled = true)
     fun onModtag(event: TagChangeEvent) {
+        val clan = event.clan
         // Running the runnable on next tick to get the actual clan tag color
         getScheduler().runTask(plugin, Runnable {
-            plugin.landsLayer?.upsertMarker(event.clan)
+            plugin.landsLayer?.upsertMarker(clan)
+            plugin.homeLayer?.upsertMarker(clan)
         })
     }
 
