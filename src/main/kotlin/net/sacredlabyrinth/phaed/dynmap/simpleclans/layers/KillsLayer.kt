@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 class KillsLayer(private val iconStorage: IconStorage, config: LayerConfig, markerAPI: MarkerAPI) :
     Layer("simpleclans.layers.kill", config, markerAPI) {
 
-    private val timeFormat:DateTimeFormatter = DateTimeFormatter.ofPattern(config.getString("time-format", "HH:mm:ss"))
+    private val timeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern(config.getString("time-format", "HH:mm:ss"))
 
     fun createMarker(kill: Kill) {
         val vclan = kill.victim.clan
@@ -20,8 +20,8 @@ class KillsLayer(private val iconStorage: IconStorage, config: LayerConfig, mark
         val loc = victim.location
         val worldName = loc.world?.name
 
-        if (vclan == null && !config.getBoolean("show.clan-players", true) ||
-            vclan != null && !config.getBoolean("show.civilians", true)) {
+        if (config.getBoolean("hide.clan-players", false) && vclan != null ||
+            config.getBoolean("hide.civilians", false) && vclan == null) {
             return
         }
 

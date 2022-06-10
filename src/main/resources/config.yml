@@ -24,21 +24,21 @@ hide-warring-players: true         # Hide members of clans while the clans are a
 layer:
   lands:
     enable: true
-    label: "Lands"                 # The label for the layer
-    format: "{clan} &8(base)"      # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
-    layer-priority: 1              # Ordering priority in layer menu (higher shows on top)
-    hide-by-default: false         # Make home layer hidden by default
-    min-zoom: 0                    # Set minimum zoom level when markers should be visible (0=default, any zoom)
-    hidden-lands: []               # Any clan tags added to this list will be hidden from view.
+    label: "Lands"                  # The label for the layer
+    format: "{clan} &8(base)"       # Variables: {clan}, {tag}, {member_count}, (more placeholders: https://github.com/RoinujNosde/Dynmap-SimpleClans/wiki/Placeholders), Colors: &1, New line is pipe symbol: |
+    layer-priority: 1               # Ordering priority in layer menu (higher shows on top)
+    hide-by-default: false          # Make home layer hidden by default
+    min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
+    hidden-lands: []                # Any clan tags added to this list will be hidden from view.
     style:
-      based-on-tag: false          # Fill and Line styles will be based on the clan tag colors
+      based-on-tag: false           # Fill and Line styles will be based on the clan tag colors
       fill:
-        color: "#57b356"           # The default color (green) of the fill
-        opacity: 0.35              # The default opacity for the fill
+        color: "#57b356"            # The default color (green) of the fill
+        opacity: 0.35               # The default opacity for the fill
       line:
-        color: "#2d682d"           # The default color (green) of the line
-        opacity: 0.8               # The default opacity for the line
-        weight: 3                  # The default weight of the line
+        color: "#2d682d"            # The default color (green) of the line
+        opacity: 0.8                # The default opacity for the line
+        weight: 3                   # The default weight of the line
   homes:
     enable: true
     default-icon: "clanhome"        # Set the icon used if the clan doesn't set one, DON'T type the file extension
@@ -71,6 +71,6 @@ layer:
     hide-by-default: false          # Make home layer hidden by default
     min-zoom: 0                     # Set minimum zoom level when markers should be visible (0=default, any zoom)
     visible-seconds: 300            # How long the marker will stay visible for
-    show:
-      clan-players: true            # Show deaths of clan players
-      civilians: true               # Show deaths of civilians
+    hide:
+      clan-players: false           # Hide deaths of clan players
+      civilians: false              # Hide deaths of civilians
