@@ -73,6 +73,7 @@ public class DynmapSimpleClans extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
         if (reload()) {
+            loadTasks();
             new CommandManager(this);
             getPluginManager().registerEvents(new DynmapSimpleClansListener(this), this);
         }
@@ -89,7 +90,6 @@ public class DynmapSimpleClans extends JavaPlugin {
         }
 
         saveDefaultImages();
-        loadTasks();
         loadLayers();
 
         return true;
