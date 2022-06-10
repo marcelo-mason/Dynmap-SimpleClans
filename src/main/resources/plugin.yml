@@ -3,18 +3,21 @@ main: net.sacredlabyrinth.phaed.dynmap.simpleclans.DynmapSimpleClans
 version: ${project.version}
 website: ${project.url}
 author: phaed
-depend: [ dynmap, SimpleClans ]
+authors:
+  - RoinujNosde
+  - Minat0_
+depend:
+  - dynmap
+  - SimpleClans
 commands:
   clanmap:
     description: Map commands
     usage: Syntax error, verify the command usage on /<command> help
 permissions:
-  simpleclans.map.toggle:
-    description: Can toggle map visibility
   simpleclans.map.reload:
     description: Can reload the plugin
   simpleclans.map.list:
-    description: Can list the icons
+    description: Can retrieve the list of icons
   simpleclans.map.icon.bypass:
     description: Can use all icons
   simpleclans.map.seticon:
