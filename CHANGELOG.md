@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/RoinujNosde/Dynmap-SimpleClans/compare/v2.0.0...v2.0.1) (2022-06-14)
+
+
+### Bug Fixes
+
+* dynmap not found on Spigot ([35aae4d](https://github.com/RoinujNosde/Dynmap-SimpleClans/commit/35aae4d964b9fe2a16223f229b6565b4b80b0f98))
+
 ## [2.0.0](https://github.com/RoinujNosde/Dynmap-SimpleClans/compare/v1.4.2...v2.0.0) (2022-06-10)
 
 
