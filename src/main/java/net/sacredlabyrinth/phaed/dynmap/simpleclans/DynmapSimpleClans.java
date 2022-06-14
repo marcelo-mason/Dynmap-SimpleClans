@@ -153,7 +153,7 @@ public class DynmapSimpleClans extends JavaPlugin {
     }
 
     private void loadDependencies() {
-        dynmapApi = (DynmapAPI) getPluginManager().getPlugin("DynMap");
+        dynmapApi = (DynmapAPI) getPluginManager().getPlugin("dynmap");
         simpleclans = (SimpleClans) getPluginManager().getPlugin("SimpleClans");
 
         if (simpleclans == null) {
