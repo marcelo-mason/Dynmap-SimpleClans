@@ -139,7 +139,6 @@ public final class CommandManager implements TabExecutor {
             }
 
             if (!sender.hasPermission("simpleclans.map.list")) {
-                sender.sendMessage(lang("no-permission"));
                 return Collections.emptyList();
             }
 
@@ -148,7 +147,6 @@ public final class CommandManager implements TabExecutor {
                     collect(Collectors.toList());
 
             if (icons.isEmpty()) {
-                sender.sendMessage(lang("error-no-icons"));
                 return Collections.emptyList();
             }
 
